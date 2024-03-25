@@ -12,7 +12,7 @@ ExampleTraj::ExampleTraj() :
     
     this->_publisher = this->create_publisher<trajectory_msgs::msg::JointTrajectory>("joint_cmds", 10);
     this->_timer = this->create_wall_timer(
-      75ms, std::bind(&ExampleTraj::_timer_callback, this));
+      60ms, std::bind(&ExampleTraj::_timer_callback, this));
 }
 
 void ExampleTraj::_timer_callback()

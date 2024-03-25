@@ -14,7 +14,7 @@ class ExampleTraj(Node):
                      np.deg2rad(30), np.deg2rad(-30)]
         self._beginning = self.get_clock().now()
         self._publisher = self.create_publisher(JointTrajectory, 'joint_cmds', 10)
-        timer_period = 0.04  # seconds
+        timer_period = 0.06  # seconds
         self._timer = self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self):
