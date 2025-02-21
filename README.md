@@ -34,7 +34,7 @@ Make sure the additional ros libraries are installed
         # Install python pkg dependency
         pip install catkin_pkg
 
-### For Ubuntu 24.04 users Install ROS 2 Jazzy:
+#### For Ubuntu 24.04 users Install ROS 2 Jazzy:
 ROS 2 Jazzy (LTS) can be installed for ubuntu (>= 24.04) as explained in the [ROS 2 documentation](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html). 
 Additional prerequisites are found [here](#for-virtual-machine-users) if you're using a Virtual Machine.
 The easiest way is to add the sources and install via apt
@@ -60,6 +60,7 @@ Make sure the additional ros libraries are installed
         # Install python pkg dependency
         pip install catkin_pkg
 
+#### For both 22.04 and 24.04
 
 The required `boost` libraries are installed via
 
