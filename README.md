@@ -89,8 +89,11 @@ To compile each of the packages navigate into the folder, source your `ros` inst
 
 ### Running
 
-Once the package is compiled and sourced via
+Once the package is compiled, source by calling:
 
+      # Go up one directory from cpp_impl
+      cd ..
+      # Source the local setup
       source cpp_impl/install/setup.bash
 
 You can run start the simulation or the driver for the robot with the following commands
