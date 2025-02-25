@@ -6,7 +6,7 @@ class RobotHW : public Robot
 public:
     RobotHW(std::string ser="/dev/ttyUSB0",
             int baud=9600,
-            int speed=2000,
+            int speed=1000,
             int gripper_speed=9000);
     ~RobotHW();
 
