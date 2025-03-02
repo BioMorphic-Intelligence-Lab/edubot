@@ -1,7 +1,7 @@
 #include "edubot_hw.hpp"
 
 EdubotHW::EdubotHW(std::string ser, int baud, int speed, int gripper_speed):
-                Robot(4),
+                Robot(4, 0.02),
                 HOME({DEG2RAD * 0, DEG2RAD * 40, DEG2RAD * 30, DEG2RAD * -30}),
                 SPEED(speed),
                 GRIPPER_SPEED(gripper_speed),

@@ -3,10 +3,13 @@
 constexpr float DEG2RAD = M_PI / 180.0;
 
 ExampleTraj::ExampleTraj() :
-  rclcpp::Node("example_traj"),
-  HOME{DEG2RAD * 0, DEG2RAD * 40, DEG2RAD * 30, DEG2RAD * -30}
+  rclcpp::Node("example_traj")
 {
     using namespace std::chrono_literals;
+
+    // Declare all parameters
+    this->declare_parameter("home", std::vector<double>{DEG2RAD * 0, DEG2RAD * 40, DEG2RAD * 30, DEG2RAD * -30});
+    this->home = this->get_parameter("home").as_double_array();
 
     this->_beginning = this->now();
     
@@ -23,17 +26,23 @@ void ExampleTraj::_timer_callback()
   
   double dt = (now - this->_beginning).seconds();
   auto point = trajectory_msgs::msg::JointTrajectoryPoint();
-  point.positions = {HOME[0] + 0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt),
-                    HOME[1] + 0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt),
-                    HOME[2] + 0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt),
-                    HOME[3] + 0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt),
-                    1.0 * sin(2 * M_PI / 10.0 * dt)
-                  };
+  std::vector<double> positions;
+  
+  // Push joint position
+  for(uint i = 0; i < this->home.size(); i++)
+  {
+    positions.push_back(this->home.at(i)
+                        + 0.5 * M_PI * sin(2.0 * M_PI / 10.0 * dt));
+  }
+  // Push gripper positions
+  positions.push_back(0.5 * sin(2 * M_PI / 10.0 * dt) + 0.5);
 
+  // Finalize msg
+  point.positions = positions;
   msg.points = {point};
 
+  // Publish
   this->_publisher->publish(msg);
-
 }
 
 int main(int argc, char ** argv)

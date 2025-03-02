@@ -7,7 +7,17 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(sensor_msgs REQUIRED)
+find_package(robot REQUIRED)
+find_package(Eigen3 REQUIRED)
+
+add_executable(lerobot_sim src/lerobot_sim.cpp)
+ament_target_dependencies(lerobot_sim
+    robot Eigen3)
+target_include_directories(lerobot_sim PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lerobot>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(lerobot_sim PUBLIC c_std_99 cxx_std_17)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -20,6 +30,9 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(TARGETS lerobot_sim #path_publisher
+  DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY 
   launch

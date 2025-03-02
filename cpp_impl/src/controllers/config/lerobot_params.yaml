@@ -1,0 +1,3 @@
+example_raj_lerobot:
+  ros__parameters:
+    home: [0.0, 1.0472, -0.8727, 0.8727, 0.0]

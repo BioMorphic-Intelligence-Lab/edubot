@@ -10,7 +10,7 @@ private:
     rclcpp::Time _beginning;
     void _timer_callback();
 
-    const double HOME[4];
+    std::vector<double> home;
 
 public:
     ExampleTraj();

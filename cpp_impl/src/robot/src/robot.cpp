@@ -4,11 +4,11 @@
 #include <cmath>
 #include <cassert>
 
-Robot::Robot(uint n):
+Robot::Robot(uint n, float max_gripper):
                 Node("robot"),
                 n(n),
                 gripper((float)GripperState::Closed),
-                _MAX_GRIPPER{0.02}
+                _MAX_GRIPPER(max_gripper)
 {
     using namespace std::chrono_literals;
 

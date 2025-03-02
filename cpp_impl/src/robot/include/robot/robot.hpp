@@ -20,7 +20,7 @@ class Robot : public rclcpp::Node
 {
 public:
 
-    Robot(uint n);
+    Robot(uint n, float gripper_max);
 
     ~Robot();
 
@@ -50,14 +50,13 @@ protected:
 
 private:
     
-    
     rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_sub;
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub;
 
     rclcpp::TimerBase::SharedPtr _timer;
 
     void cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
-    void timer_callback();    
+    void timer_callback(); 
 
-    const float _MAX_GRIPPER;
+    const float _MAX_GRIPPER;   
 };
