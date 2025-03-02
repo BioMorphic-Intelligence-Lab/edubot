@@ -32,8 +32,6 @@ Robot::Robot(uint n):
     this->_timer = this->create_wall_timer(1.0 / this->get_parameter("f").as_double() * 1s,
                                            std::bind(&Robot::timer_callback,
                                                      this));
-
-
 }
 
 Robot::~Robot()
@@ -67,7 +65,7 @@ void Robot::timer_callback()
   std::vector<float> q_float = this->get_q();
   // Get gripper state scaled by its max opening value
   float gripper = this->get_gripper();
-  // We have to append it twice to since left gripper and right 
+  // We have to append it twice since left gripper and right 
   // Gripper are treated independently by rviz
   q_float.push_back(this->_MAX_GRIPPER * gripper);
   q_float.push_back(- this->_MAX_GRIPPER * gripper);

@@ -1,3 +1,0 @@
-[submodule "cpp_impl/src/common"]
-	path = cpp_impl/src/common
-	url = https://github.com/BioMorphic-Intelligence-Lab/common
