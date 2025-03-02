@@ -27,7 +27,7 @@ void ExampleTraj::_timer_callback()
                     HOME[1] + 0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt),
                     HOME[2] + 0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt),
                     HOME[3] + 0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt),
-                    0.5 * sin(2 * M_PI / 10.0 * dt) + 0.5
+                    1.0 * sin(2 * M_PI / 10.0 * dt)
                   };
 
   msg.points = {point};

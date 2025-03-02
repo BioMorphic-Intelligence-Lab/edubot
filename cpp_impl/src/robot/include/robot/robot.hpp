@@ -37,12 +37,16 @@ protected:
 
     virtual void homing() = 0;
 
+    virtual void init_q() = 0;
+    virtual void init_names() = 0;
+
     virtual std::vector<float> get_q();
-    virtual float get_gripper();
+    virtual std::vector<float> get_gripper();
 
     uint n;
     std::vector<float> q;
-    float gripper;
+    std::vector<std::string> names;
+    std::vector<float> gripper;
 
 private:
     
@@ -55,6 +59,5 @@ private:
     void cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
     void timer_callback();    
 
-    const char *_names[6];
     const float _MAX_GRIPPER;
 };

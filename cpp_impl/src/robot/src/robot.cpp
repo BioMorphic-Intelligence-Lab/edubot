@@ -7,9 +7,7 @@
 Robot::Robot(uint n):
                 Node("robot"),
                 n(n),
-                q({0.0, 0.0, 0.0, 0.0}),
                 gripper((float)GripperState::Closed),
-                _names{"link1_joint", "link2_joint", "link3_joint", "link4_joint", "gripper_left_joint", "gripper_right_joint"},
                 _MAX_GRIPPER{0.02}
 {
     using namespace std::chrono_literals;
@@ -59,20 +57,18 @@ void Robot::cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr 
 void Robot::timer_callback()
 {
   sensor_msgs::msg::JointState js;
-  js.name = {"", "", "", "", "", ""};
+  js.name = this->names;
   js.header.stamp = this->now();
 
   std::vector<float> q_float = this->get_q();
   // Get gripper state scaled by its max opening value
-  float gripper = this->get_gripper();
-  // We have to append it twice since left gripper and right 
+  std::vector<float> gripper = this->get_gripper();
+  // We may have to append it twice since left gripper and right 
   // Gripper are treated independently by rviz
-  q_float.push_back(this->_MAX_GRIPPER * gripper);
-  q_float.push_back(- this->_MAX_GRIPPER * gripper);
+  for(float val : this->gripper)
+    q_float.push_back(this->_MAX_GRIPPER * val);
 
   std::vector<double> q(q_float.begin(), q_float.end());
-
-  for(uint i = 0; i < 6; i++) js.name[i] = this->_names[i];
   
   js.position = q;
 
@@ -85,8 +81,10 @@ std::vector<float> Robot::get_q()
     return this->q;
 }
 
-float Robot::get_gripper()
+std::vector<float> Robot::get_gripper()
 {
     return this->gripper;
 }
+
+
 

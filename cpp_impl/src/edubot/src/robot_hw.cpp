@@ -9,6 +9,10 @@ RobotHW::RobotHW(std::string ser, int baud, int speed, int gripper_speed):
                 MAX({2500, 2500, 2500, 2500}),
                 RANGE({M_PI, M_PI, M_PI, M_PI})
 {
+    /* Init initial state and names */
+    this->init_q();
+    this->init_names();
+    
     /* Open the serial port for communication */
     boost::asio::io_service io;
     this->serial = new boost::asio::serial_port(io, ser);
@@ -27,6 +31,17 @@ RobotHW::~RobotHW()
     /* Close the serial port and delete the serial port pointer */
     if (this->serial->is_open()) this->serial->close();
     delete this->serial;
+}
+
+void RobotHW::init_q()
+{
+    this->q = {0, 0, 0, 0};
+}
+
+void RobotHW::init_names()
+{
+    this->names = {"link1_joint", "link2_joint", "link3_joint",
+        "link4_joint", "gripper_joint"};
 }
 
 
@@ -114,12 +129,12 @@ void RobotHW::set_des_gripper(GripperState state)
     if(state == GripperState::Open)
     {
         cmd = this->format_cmd(4, 900, this->GRIPPER_SPEED);
-        this->gripper = GripperState::Open;
+        this->gripper = std::vector<float>{GripperState::Open};
     }
     else if(state == GripperState::Closed)
     {
         cmd = this->format_cmd(4, 2500, this->GRIPPER_SPEED);
-        this->gripper = GripperState::Closed;
+        this->gripper = std::vector<float>{GripperState::Closed};
     }
     cmd += "\r";
 
@@ -142,13 +157,13 @@ void RobotHW::set_des_gripper(float o)
     if(o <= 0)
     {
         cmd = this->format_cmd(4, closed, this->GRIPPER_SPEED);
-        this->gripper = (float)GripperState::Closed;
+        this->gripper = std::vector<float>{(float)GripperState::Closed};
     }
     /* Gripper shall be fully open */
     else if(o >= 1)
     {
         cmd = this->format_cmd(4, opened, this->GRIPPER_SPEED);
-        this->gripper = (float)GripperState::Open;
+        this->gripper = std::vector<float>{(float)GripperState::Open};
     }
     /* Opening somewhere in between */
     else
@@ -156,7 +171,7 @@ void RobotHW::set_des_gripper(float o)
         cmd = this->format_cmd(4,
                 closed + o*(opened - closed),
                 this->GRIPPER_SPEED);
-        this->gripper = o;
+        this->gripper = std::vector<float>{o};
     }
     cmd += "\r";
 

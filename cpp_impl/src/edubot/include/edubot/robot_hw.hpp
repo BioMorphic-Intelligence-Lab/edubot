@@ -1,4 +1,4 @@
-#include "robot.hpp"
+#include "robot/robot.hpp"
 
 class RobotHW : public Robot
 {
@@ -19,6 +19,9 @@ protected:
 
     void set_des_gripper(GripperState state)  override;
     void set_des_gripper(float o) override;
+
+    void init_q() override;
+    void init_names() override;
 
     void homing()  override;
 

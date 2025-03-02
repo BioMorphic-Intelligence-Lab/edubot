@@ -4,11 +4,26 @@ RobotSim::RobotSim():
     Robot(4),
     HOME({DEG2RAD * 0, DEG2RAD * 40, DEG2RAD * 30, DEG2RAD * -30})
 {
+    /* Init initial state and names */
+    this->init_q();
+    this->init_names();
+ 
     /* Bring to initial state */
     this->homing();
     this->set_des_gripper(GripperState::Open);
+
 }
 
+void RobotSim::init_q()
+{
+    this->q = {0, 0, 0, 0};
+}
+
+void RobotSim::init_names()
+{
+    this->names = {"link1_joint", "link2_joint", "link3_joint",
+        "link4_joint", "gripper_left_joint", "gripper_right_joint"};
+}
 void RobotSim::set_des_q_single_rad(uint servo, float q)
 {
     this->q.at(servo) = q;
@@ -40,11 +55,13 @@ void RobotSim::set_des_gripper(GripperState state)
 {
     if(state == GripperState::Open)
     {
-        this->gripper = (float)GripperState::Open;
+        this->gripper = std::vector<float>{(float)GripperState::Open,
+                                          -(float)GripperState::Open};
     }
     else if(state == GripperState::Closed)
     {
-        this->gripper = (float)GripperState::Closed;
+        this->gripper = std::vector<float>{(float)GripperState::Closed,
+                                          -(float)GripperState::Closed};
     }
 }
 
@@ -58,17 +75,23 @@ void RobotSim::set_des_gripper(float o)
     /* Gripper shall be fully closed */
     if(o <= 0)
     {
-        this->gripper = (float)GripperState::Closed;
+        this->gripper = std::vector<float>({
+             (float)GripperState::Closed,
+            -(float)GripperState::Closed
+        });
     }
     /* Gripper shall be fully open */
     else if(o >= 1)
     {
-        this->gripper = (float)GripperState::Open;
+        this->gripper = std::vector<float>({
+             (float)GripperState::Open,
+            -(float)GripperState::Open
+        });
     }
     /* Opening somewhere in between */
     else
     {
-        this->gripper = o;
+        this->gripper = std::vector<float>({o, -o});
     }
 }
 
