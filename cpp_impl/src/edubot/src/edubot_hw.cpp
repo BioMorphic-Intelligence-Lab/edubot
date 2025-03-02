@@ -1,4 +1,4 @@
-#include "robot_hw.hpp"
+#include "edubot_hw.hpp"
 
 RobotHW::RobotHW(std::string ser, int baud, int speed, int gripper_speed):
                 Robot(4),

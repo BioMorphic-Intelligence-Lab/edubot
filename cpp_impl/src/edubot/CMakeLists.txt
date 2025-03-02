@@ -19,21 +19,21 @@ find_package(tf2_ros REQUIRED)
 # Add include directories
 include_directories($<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>)
 
-add_executable(robot_hw src/robot_hw.cpp)
-ament_target_dependencies(robot_hw 
+add_executable(edubot_hw src/edubot_hw.cpp)
+ament_target_dependencies(edubot_hw 
     robot Eigen3)
-target_include_directories(robot_hw PUBLIC
+target_include_directories(edubot_hw PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/edubot>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(robot_hw PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(edubot_hw PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-add_executable(robot_sim src/robot_sim.cpp)
-ament_target_dependencies(robot_sim
+add_executable(edubot_sim src/edubot_sim.cpp)
+ament_target_dependencies(edubot_sim
     robot Eigen3)
-target_include_directories(robot_sim PUBLIC
+target_include_directories(edubot_sim PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/edubot>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(robot_sim PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(edubot_sim PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 #add_executable(path_publisher src/path_publisher.cpp)
 #ament_target_dependencies(path_publisher
@@ -44,7 +44,7 @@ target_compile_features(robot_sim PUBLIC c_std_99 cxx_std_17)  # Require C99 and
 #  $<INSTALL_INTERFACE:include>)
 #target_compile_features(path_publisher PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS robot_hw robot_sim #path_publisher
+install(TARGETS edubot_hw edubot_sim #path_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY 

@@ -17,8 +17,8 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     start_sim = Node(package = pkg_name,
-                     name = "robot_sim",
-                     executable = "robot_sim")
+                     name = "edubot_sim",
+                     executable = "edubot_sim")
     
     #start_path_pub = Node(package = pkg_name,
     #                      name = "path_publisher",

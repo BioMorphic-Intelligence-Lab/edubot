@@ -102,7 +102,7 @@ You can run start the simulation or the driver for the robot with the following 
 ------------------------------------|---------------------------------------------------
 `ros2 launch edubot sim.launch.py`  |  Launches the simulation and `rviz` visualization
 `ros2 launch edubot rviz.launch.py` |  Launches the `rviz` visualization and a joint position interface which lets you play with the robot
-`ros2 run edubot robot_hw`          |  Starts the Hardware driver for the robot
+`ros2 run edubot edubot_hw`         |  Starts the Hardware driver for the robot
 `ros2 run controllers example_traj` |  Starts the an controller that commands a periodic example trajectory
 
 ### For Virtual Machine Users
