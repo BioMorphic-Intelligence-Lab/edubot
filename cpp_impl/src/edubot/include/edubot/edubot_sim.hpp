@@ -1,9 +1,9 @@
 #include "robot/robot.hpp"
 
-class RobotSim : public Robot
+class EdubotSim : public Robot
 {
 public:
-    RobotSim();
+    EdubotSim();
 
 protected:
     void set_des_q_single_rad(uint servo, float q) override;

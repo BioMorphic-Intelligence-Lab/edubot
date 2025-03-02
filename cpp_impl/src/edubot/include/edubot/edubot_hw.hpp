@@ -1,14 +1,14 @@
 #include "robot/robot.hpp"
 
-class RobotHW : public Robot
+class EdubotHW : public Robot
 {
 
 public:
-    RobotHW(std::string ser="/dev/ttyUSB0",
+    EdubotHW(std::string ser="/dev/ttyUSB0",
             int baud=9600,
             int speed=1000,
             int gripper_speed=9000);
-    ~RobotHW();
+    ~EdubotHW();
 
 protected:
     void set_des_q_single_rad(uint servo, float q) override;

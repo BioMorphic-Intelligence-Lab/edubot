@@ -1,6 +1,6 @@
 #include "edubot_hw.hpp"
 
-RobotHW::RobotHW(std::string ser, int baud, int speed, int gripper_speed):
+EdubotHW::EdubotHW(std::string ser, int baud, int speed, int gripper_speed):
                 Robot(4),
                 HOME({DEG2RAD * 0, DEG2RAD * 40, DEG2RAD * 30, DEG2RAD * -30}),
                 SPEED(speed),
@@ -26,19 +26,19 @@ RobotHW::RobotHW(std::string ser, int baud, int speed, int gripper_speed):
     this->set_des_gripper(GripperState::Open);
 }
 
-RobotHW::~RobotHW()
+EdubotHW::~EdubotHW()
 {
     /* Close the serial port and delete the serial port pointer */
     if (this->serial->is_open()) this->serial->close();
     delete this->serial;
 }
 
-void RobotHW::init_q()
+void EdubotHW::init_q()
 {
     this->q = {0, 0, 0, 0};
 }
 
-void RobotHW::init_names()
+void EdubotHW::init_names()
 {
     this->names = {"link1_joint", "link2_joint", "link3_joint",
         "link4_joint", "gripper_joint"};
@@ -48,7 +48,7 @@ void RobotHW::init_names()
 /* Set a single servo reference position
 *   @param servo: The servo index
 *   @param     q: The position in radians */
-void RobotHW::set_des_q_single_rad(uint servo, float q)
+void EdubotHW::set_des_q_single_rad(uint servo, float q)
 {
     assert(servo <= this->n);
     std::string cmd = this->format_cmd(servo,
@@ -63,14 +63,14 @@ void RobotHW::set_des_q_single_rad(uint servo, float q)
 /* Set a single servo reference position
 *   @param servo: The servo index
 *   @param     q: The position in degrees */
-void RobotHW::set_des_q_single_deg(uint servo, float q)
+void EdubotHW::set_des_q_single_deg(uint servo, float q)
 {
     this->set_des_q_single_rad(servo, q * RAD2DEG);
 }
 
 /* Set all servo reference position
 *   @param     q: The position in rad */
-void RobotHW::set_des_q_rad(const std::vector<float> & q)
+void EdubotHW::set_des_q_rad(const std::vector<float> & q)
 {
     assert(q.size() == this->n);
     std::string cmd = "";
@@ -89,7 +89,7 @@ void RobotHW::set_des_q_rad(const std::vector<float> & q)
 
 /* Set all servo reference position
 *   @param     q: The position in degree */
-void RobotHW::set_des_q_deg(const std::vector<float> & q)
+void EdubotHW::set_des_q_deg(const std::vector<float> & q)
 {
     assert(q.size() == this->n);
     std::string cmd = "";
@@ -105,7 +105,7 @@ void RobotHW::set_des_q_deg(const std::vector<float> & q)
     this->write_cmd(cmd);
 }
 
-void RobotHW::homing()
+void EdubotHW::homing()
 {
     std::string cmd = "";
     for(uint i = 0; i < this->n; i++)
@@ -123,7 +123,7 @@ void RobotHW::homing()
 /* Set the currently desired gripper state
 *    @param state: Currently desired gripper state (Open or Closed)
 */
-void RobotHW::set_des_gripper(GripperState state)
+void EdubotHW::set_des_gripper(GripperState state)
 {
     std::string cmd;
     if(state == GripperState::Open)
@@ -146,7 +146,7 @@ void RobotHW::set_des_gripper(GripperState state)
  * 0 = fully closed
  * 1 = fully open
  */
-void RobotHW::set_des_gripper(float o)
+void EdubotHW::set_des_gripper(float o)
 {
     int opened = 2200;
     int closed = 500;
@@ -185,7 +185,7 @@ void RobotHW::set_des_gripper(float o)
 *            
 *  @returns number of ticks equivalent to the rad angle
 */
-int RobotHW::RAD_2_TICKS(uint servo, float rad)
+int EdubotHW::RAD_2_TICKS(uint servo, float rad)
 {
     return (this->MAX.at(servo) - this->MIN.at(servo)) * (rad / this->RANGE.at(servo)  + 0.5) 
                     + this->MIN.at(servo);
@@ -197,7 +197,7 @@ int RobotHW::RAD_2_TICKS(uint servo, float rad)
 *   @param   vel: The velocity in ticks per second
 *
 *   @return correctly formatted string */
-std::string RobotHW::format_cmd(uint servo, int pos, int vel)
+std::string EdubotHW::format_cmd(uint servo, int pos, int vel)
 {
     char buffer[13];
     if (vel == 0) sprintf(buffer, "#%dP%04d", servo, pos);
@@ -208,7 +208,7 @@ std::string RobotHW::format_cmd(uint servo, int pos, int vel)
 /* Write the command to the serial port
 *   @param cmd: command to be forwarded
 */
-void RobotHW::write_cmd(std::string cmd)
+void EdubotHW::write_cmd(std::string cmd)
 {
     this->serial->write_some(boost::asio::buffer(cmd, cmd.length()));
 }
@@ -217,7 +217,7 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
     
-  rclcpp::spin(std::make_shared<RobotHW>());
+  rclcpp::spin(std::make_shared<EdubotHW>());
   rclcpp::shutdown();
   return 0;
 }

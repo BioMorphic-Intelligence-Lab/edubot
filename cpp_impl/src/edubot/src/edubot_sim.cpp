@@ -1,6 +1,6 @@
 #include "edubot_sim.hpp"
 
-RobotSim::RobotSim(): 
+EdubotSim::EdubotSim(): 
     Robot(4),
     HOME({DEG2RAD * 0, DEG2RAD * 40, DEG2RAD * 30, DEG2RAD * -30})
 {
@@ -14,26 +14,26 @@ RobotSim::RobotSim():
 
 }
 
-void RobotSim::init_q()
+void EdubotSim::init_q()
 {
     this->q = {0, 0, 0, 0};
 }
 
-void RobotSim::init_names()
+void EdubotSim::init_names()
 {
     this->names = {"link1_joint", "link2_joint", "link3_joint",
         "link4_joint", "gripper_left_joint", "gripper_right_joint"};
 }
-void RobotSim::set_des_q_single_rad(uint servo, float q)
+void EdubotSim::set_des_q_single_rad(uint servo, float q)
 {
     this->q.at(servo) = q;
 }
-void RobotSim::set_des_q_single_deg(uint servo, float q)
+void EdubotSim::set_des_q_single_deg(uint servo, float q)
 {
     this->set_des_q_single_rad(servo, q * RAD2DEG);
 }
 
-void RobotSim::set_des_q_rad(const std::vector<float> & q)
+void EdubotSim::set_des_q_rad(const std::vector<float> & q)
 {
     assert(q.size() == this->n);
     for(uint i = 0; i < this->n; i++)
@@ -42,7 +42,7 @@ void RobotSim::set_des_q_rad(const std::vector<float> & q)
     }
 
 }
-void RobotSim::set_des_q_deg(const std::vector<float> & q)
+void EdubotSim::set_des_q_deg(const std::vector<float> & q)
 {
     assert(q.size() == this->n);
     for(uint i = 0; i < this->n; i++)
@@ -51,7 +51,7 @@ void RobotSim::set_des_q_deg(const std::vector<float> & q)
     }
 }
 
-void RobotSim::set_des_gripper(GripperState state)
+void EdubotSim::set_des_gripper(GripperState state)
 {
     if(state == GripperState::Open)
     {
@@ -70,7 +70,7 @@ void RobotSim::set_des_gripper(GripperState state)
  * 0 = fully closed
  * 1 = fully open
  */
-void RobotSim::set_des_gripper(float o)
+void EdubotSim::set_des_gripper(float o)
 {
     /* Gripper shall be fully closed */
     if(o <= 0)
@@ -95,7 +95,7 @@ void RobotSim::set_des_gripper(float o)
     }
 }
 
-void RobotSim::homing()
+void EdubotSim::homing()
 {
     for(uint i = 0; i < this->n; i++)
     { 
@@ -108,7 +108,7 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
     
-  rclcpp::spin(std::make_shared<RobotSim>());
+  rclcpp::spin(std::make_shared<EdubotSim>());
   rclcpp::shutdown();
   return 0;
 }
