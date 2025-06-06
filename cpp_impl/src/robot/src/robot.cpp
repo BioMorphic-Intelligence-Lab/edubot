@@ -15,6 +15,8 @@ Robot::Robot(uint n, float max_gripper):
     this->declare_parameter("f", 24.0);
     this->declare_parameter("pub_topic", "joint_states");
     this->declare_parameter("sub_topic", "joint_cmds");
+    this->declare_parameter("vel_sub_topic", "joint_vel_cmds");    
+    this->velocity_mode = false;
 
     this->joint_cmd_sub = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
         this->get_parameter("sub_topic").as_string(),
@@ -23,6 +25,13 @@ Robot::Robot(uint n, float max_gripper):
                 this,
                 std::placeholders::_1)
     );
+    this->joint_vel_cmd_sub = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
+        this->get_parameter("vel_sub_topic").as_string(),
+        10,
+        std::bind(&Robot::vel_cmd_callback,
+                this,
+                std::placeholders::_1)
+    );    
 
     this->joint_state_pub = this->create_publisher<sensor_msgs::msg::JointState>(
         this->get_parameter("pub_topic").as_string(), 10);
@@ -42,7 +51,11 @@ void Robot::cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr 
 {
     std::vector<double> positions = msg->points[0].positions;
     std::vector<float> des_q(this->n);
-
+    if(positions.size() < this->n){
+      std::cout << "Joint Trajectory Command rejected. Too few inputs" << std::endl;
+      return;
+    }
+    this->velocity_mode = false;
     for(uint i = 0; i < this->n; i++)
     {
         des_q.at(i) = positions.at(i);
@@ -52,6 +65,19 @@ void Robot::cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr 
     /* If this trajectory setpoint also contains gripper commands */
     if(positions.size() == this->n + 1)
         this->set_des_gripper(positions.at(n));
+}
+
+/* Callback function for when new joint velocities are published. 
+ * We assume the trajectory only contains one JointTrajectoryPoint: the desired velocity one  */
+void Robot::vel_cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg)
+{
+    std::vector<double> velocities = msg->points[0].velocities;
+    if(velocities.size() < this->n){
+      std::cout << "Joint Velocity Command rejected. Too few inputs" << std::endl;
+      return;
+    }
+    this->velocity_mode = true;
+    this->qdot_cmds = velocities;
 }
     
 void Robot::timer_callback()
@@ -73,6 +99,25 @@ void Robot::timer_callback()
   js.position = q;
 
   this->joint_state_pub->publish(js);
+
+  //======After a state feedback step, we do a velocity ctrl step if necessary======//
+  if(this->velocity_mode){
+    std::vector<float> des_q(this->n);
+    double dt = (1.0 / (this->get_parameter("f").as_double()));
+    for(uint i = 0; i < this->n; i++)
+    {
+        des_q.at(i) = q_float.at(i) + dt * qdot_cmds.at(i);
+    }
+    this->set_des_q_rad(des_q);
+
+    /* If this trajectory setpoint also contains gripper commands */
+    if(qdot_cmds.size() == this->n + 1){
+      //for the gripper, 0 degrees is 0 command (fully closed), 90 degrees is 1 command (fully open)
+      float gripper_actual_value = (q_float.at(n) + dt * qdot_cmds.at(n))/(0.5*M_PI);
+      this->set_des_gripper(gripper_actual_value);  
+    }
+  }
+  //===============================================================================//
 
 }    
 

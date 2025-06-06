@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 
 #include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/float32_multi_array.hpp"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 
@@ -45,17 +46,21 @@ protected:
 
     uint n;
     std::vector<float> q;
+    std::vector<double> qdot_cmds;
+    bool velocity_mode;
     std::vector<std::string> names;
     std::vector<float> gripper;
 
 private:
     
     rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_sub;
+    rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_vel_cmd_sub;    
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub;
 
     rclcpp::TimerBase::SharedPtr _timer;
 
     void cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
+    void vel_cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);    
     void timer_callback(); 
 
     const float _MAX_GRIPPER;   
