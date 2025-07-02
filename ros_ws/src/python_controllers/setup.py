@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'controllers'
+package_name = 'python_controllers'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'example_traj = controllers.example_traj:main'
+            'example_traj = python_controllers.example_traj:main'
         ],
     },
 )
