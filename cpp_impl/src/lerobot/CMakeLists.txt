@@ -7,12 +7,12 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(robot REQUIRED)
+find_package(robot_core REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 add_executable(lerobot_sim src/lerobot_sim.cpp)
 ament_target_dependencies(lerobot_sim
-    robot Eigen3)
+    robot_core Eigen3)
 target_include_directories(lerobot_sim PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lerobot>
   $<INSTALL_INTERFACE:include>)

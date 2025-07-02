@@ -6,6 +6,7 @@
 #include "std_msgs/msg/float32_multi_array.hpp"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "robot_core/srv/set_mode.hpp"
 
 
 constexpr float DEG2RAD = M_PI / 180.0;
@@ -15,6 +16,12 @@ enum GripperState
 {
     Closed = 0,
     Open = 1
+};
+
+enum Mode
+{
+    Position = 0,
+    Velocity = 1
 };
 
 class Robot : public rclcpp::Node
@@ -47,21 +54,26 @@ protected:
     uint n;
     std::vector<float> q;
     std::vector<double> qdot_cmds;
-    bool velocity_mode;
+
+    Mode mode;
     std::vector<std::string> names;
     std::vector<float> gripper;
 
 private:
     
     rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_sub;
-    rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_vel_cmd_sub;    
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub;
+
+    rclcpp::Service<robot_core::srv::SetMode>::SharedPtr set_mode_server;
 
     rclcpp::TimerBase::SharedPtr _timer;
 
     void cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
-    void vel_cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);    
     void timer_callback(); 
+    void set_mode_callback(
+        const std::shared_ptr<robot_core::srv::SetMode::Request> request,
+        std::shared_ptr<robot_core::srv::SetMode::Response> response
+    );
 
     const float _MAX_GRIPPER;   
 };
