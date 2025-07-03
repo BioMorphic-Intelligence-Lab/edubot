@@ -4,7 +4,7 @@
 #include <cmath>
 #include <cassert>
 
-Robot::Robot(uint n, float max_gripper):
+Robot::Robot(uint n, double max_gripper):
                 Node("robot"),
                 n(n),
                 gripper((float)GripperState::Closed),
@@ -12,7 +12,7 @@ Robot::Robot(uint n, float max_gripper):
 {
     using namespace std::chrono_literals;
 
-    this->declare_parameter("f", 24.0);
+    this->declare_parameter("f", 100.0);
     this->declare_parameter("pub_topic", "joint_states");
     this->declare_parameter("sub_topic", "joint_cmds");
     this->declare_parameter("vel_sub_topic", "joint_vel_cmds");    
@@ -66,7 +66,7 @@ void Robot::set_mode_callback(
     RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
   } else if (str.compare("velocity") == 0) {    
     // Ensure we have the correct amount of values in the cmds vector
-    while(this->qdot_cmds.size() < this->n) this->qdot_cmds.push_back(0);
+    while(this->qdot.size() < this->n) this->qdot.push_back(0);
 
     this->mode = Mode::Velocity;
     success = true;
@@ -86,7 +86,7 @@ void Robot::cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr 
       case Mode::Position:
       {
         std::vector<double> positions = msg->points[0].positions;
-        std::vector<float> des_q(this->n);
+        std::vector<double> des_q(this->n);
         if(positions.size() < this->n){
           std::cout << "Joint Trajectory Command rejected. Too few inputs" << std::endl;
           return;
@@ -112,7 +112,7 @@ void Robot::cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr 
           return;
         }
 
-        this->qdot_cmds = velocities;
+        this->set_des_qdot_rad(velocities);
 
         break;
       }
@@ -125,47 +125,37 @@ void Robot::timer_callback()
   js.name = this->names;
   js.header.stamp = this->now();
 
-  std::vector<float> q_float = this->get_q();
+  // Get Joint states
+  std::vector<double> q_pub = this->get_q();
+  std::vector<double> qdot_pub = this->get_qdot();
+
   // Get gripper state scaled by its max opening value
-  std::vector<float> gripper = this->get_gripper();
+  std::vector<double> gripper = this->get_gripper();
+
   // We may have to append it twice since left gripper and right 
   // Gripper are treated independently by rviz
-  for(float val : this->gripper)
-    q_float.push_back(this->_MAX_GRIPPER * val);
+  for(double val : this->gripper)
+    q_pub.push_back(this->_MAX_GRIPPER * val);
 
-  std::vector<double> q(q_float.begin(), q_float.end());
-  
-  js.position = q;
-
+  // Publish current joint state
+  js.position = q_pub;
+  js.velocity = qdot_pub;
   this->joint_state_pub->publish(js);
-
-  //======After a state feedback step, we do a velocity ctrl step if necessary======//
-  if(this->mode == Mode::Velocity){
-    std::vector<float> des_q(this->n);
-    double dt = (1.0 / (this->get_parameter("f").as_double()));
-    for(uint i = 0; i < this->n; i++)
-    {
-        des_q.at(i) = q_float.at(i) + dt * qdot_cmds.at(i);
-    }
-    this->set_des_q_rad(des_q);
-
-    /* If this trajectory setpoint also contains gripper commands */
-    if(qdot_cmds.size() == this->n + 1){
-      //for the gripper, 0 degrees is 0 command (fully closed), 90 degrees is 1 command (fully open)
-      float gripper_actual_value = (q_float.at(n) + dt * qdot_cmds.at(n))/(0.5*M_PI);
-      this->set_des_gripper(gripper_actual_value);  
-    }
-  }
-  //===============================================================================//
-
 }    
 
-std::vector<float> Robot::get_q()
+std::vector<double> Robot::get_q()
 {
-    return this->q;
+  return this->q;
 }
 
-std::vector<float> Robot::get_gripper()
+std::vector<double> Robot::get_qdot()
+{
+  /* By default we assume we have no velocity feedback
+   * and simply return zero */
+  return std::vector<double>(this->n, 0.0);
+}
+
+std::vector<double> Robot::get_gripper()
 {
     return this->gripper;
 }
