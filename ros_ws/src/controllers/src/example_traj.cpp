@@ -1,6 +1,6 @@
 #include "example_traj.hpp"
 
-constexpr float DEG2RAD = M_PI / 180.0;
+constexpr double DEG2RAD = M_PI / 180.0;
 
 ExampleTraj::ExampleTraj() :
   rclcpp::Node("example_traj")
