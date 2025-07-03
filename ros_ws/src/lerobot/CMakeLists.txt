@@ -8,15 +8,25 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(robot_core REQUIRED)
+find_package(robot_sim REQUIRED)
+find_package(feetech_cpp_lib REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 add_executable(lerobot_sim src/lerobot_sim.cpp)
 ament_target_dependencies(lerobot_sim
-    robot_core Eigen3)
+    robot_sim Eigen3)
 target_include_directories(lerobot_sim PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lerobot>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(lerobot_sim PUBLIC c_std_99 cxx_std_17)
+
+add_executable(lerobot_hw src/lerobot_hw.cpp)
+ament_target_dependencies(lerobot_hw
+    robot_core feetech_cpp_lib Eigen3)
+target_include_directories(lerobot_hw PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lerobot>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(lerobot_hw PUBLIC c_std_99 cxx_std_17)
 
 
 if(BUILD_TESTING)
@@ -31,7 +41,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(TARGETS lerobot_sim #path_publisher
+install(TARGETS lerobot_sim lerobot_hw#path_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY 
