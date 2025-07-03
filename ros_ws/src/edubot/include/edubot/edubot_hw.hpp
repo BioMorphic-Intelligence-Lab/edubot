@@ -1,4 +1,4 @@
-#include "robot/robot.hpp"
+#include "robot_core/robot.hpp"
 
 class EdubotHW : public Robot
 {
@@ -11,40 +11,42 @@ public:
     ~EdubotHW();
 
 protected:
-    void set_des_q_single_rad(uint servo, float q) override;
-    void set_des_q_single_deg(uint servo, float q)  override;
+    void set_des_q_single_rad(uint servo, double q) override;
+    void set_des_qdot_single_rad(uint servo, double qdot) override;
+    void set_des_q_single_deg(uint servo, double q) override;
+    void set_des_qdot_single_deg(uint servo, double qdot) override;
     
-    void set_des_q_rad(const std::vector<float> & q)  override;
-    void set_des_q_deg(const std::vector<float> & q)  override;
+    void set_des_q_rad(const std::vector<double> & q) override;
+    void set_des_qdot_rad(const std::vector<double> & qdot) override;
+    void set_des_q_deg(const std::vector<double> & q) override;
+    void set_des_qdot_deg(const std::vector<double> & qdot) override;
 
     void set_des_gripper(GripperState state)  override;
-    void set_des_gripper(float o) override;
+    void set_des_gripper(double o) override;
 
     void init_q() override;
     void init_names() override;
 
     void homing()  override;
 
-    void set_mode_callback(
-        const std::shared_ptr<robot_core::srv::SetMode::Request> request,
-        std::shared_ptr<robot_core::srv::SetMode::Response> response
-    ) override;
-
-
 private:
 
-    const std::vector<float> HOME;
+    const std::vector<double> HOME;
     const int SPEED;
     const int GRIPPER_SPEED;
+    const double DT;
 
     const std::vector<int> MIN;
     const std::vector<int> MAX;
-    const std::vector<float> RANGE;
+    const std::vector<double> RANGE;
 
     boost::asio::serial_port* serial;
 
+    void vel_int_callback();
     void write_cmd(std::string cmd);
     std::string format_cmd(uint servo, int pos, int vel);
-    int RAD_2_TICKS(uint servo, float rad);
+    int RAD_2_TICKS(uint servo, double rad);
+
+    rclcpp::TimerBase::SharedPtr _vel_integrator_timer;
 
 };

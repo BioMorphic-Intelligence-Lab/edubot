@@ -1,3 +1,4 @@
+#include <chrono>
 #include "edubot_hw.hpp"
 
 EdubotHW::EdubotHW(std::string ser, int baud, int speed, int gripper_speed):
@@ -5,6 +6,7 @@ EdubotHW::EdubotHW(std::string ser, int baud, int speed, int gripper_speed):
                 HOME({DEG2RAD * 0, DEG2RAD * 40, DEG2RAD * 30, DEG2RAD * -30}),
                 SPEED(speed),
                 GRIPPER_SPEED(gripper_speed),
+                DT(0.01),
                 MIN({500, 500, 500, 500}),
                 MAX({2500, 2500, 2500, 2500}),
                 RANGE({M_PI, M_PI, M_PI, M_PI})
@@ -25,8 +27,11 @@ EdubotHW::EdubotHW(std::string ser, int baud, int speed, int gripper_speed):
     this->homing();
     this->set_des_gripper(GripperState::Open);
 
-    /* Ensure mode is set to position */
-    this->mode = Mode::Position; 
+    /* Init timer for intergrating velocity in velocity mode */
+    this->_vel_integrator_timer = this->create_wall_timer(
+        std::chrono::milliseconds(static_cast<int>(1000.0 * DT)),
+        std::bind(&EdubotHW::vel_int_callback, this)
+    );
 }
 
 EdubotHW::~EdubotHW()
@@ -36,28 +41,25 @@ EdubotHW::~EdubotHW()
     delete this->serial;
 }
 
-void EdubotHW::set_mode_callback(
-    const std::shared_ptr<robot_core::srv::SetMode::Request> request,
-    std::shared_ptr<robot_core::srv::SetMode::Response> response
-)
+void EdubotHW::vel_int_callback()
 {
-    // Transform everything to lowercase
-    std::string str = request->mode;
-    for (char& c : str) {
-        c = std::tolower(c);
+    switch (this->mode)
+    {
+    case Mode::Position:
+        break;
+    case Mode::Velocity:
+    {
+        std::vector<double> new_q;
+        for(uint i = 0; i < this->n; i++)
+        {
+            new_q.push_back(this->q.at(i) + this->qdot.at(i) * DT);
+        }
+        this->set_des_q_rad(new_q);
+        break;
     }
-
-    bool success = false;
-    if (str.compare("position") == 0) {
-        this->mode = Mode::Position;
-        success = true;
-        RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
-    } else if (str.compare("velocity") == 0) {    
-        RCLCPP_INFO(this->get_logger(), "Velocity Mode not supported on this HW!");
-    } else {
-        RCLCPP_INFO(this->get_logger(), "Unknown mode '%s'!", str.c_str());
+    default:
+        break;
     }
-    response->success = success;
 }
 
 void EdubotHW::init_q()
@@ -75,7 +77,7 @@ void EdubotHW::init_names()
 /* Set a single servo reference position
 *   @param servo: The servo index
 *   @param     q: The position in radians */
-void EdubotHW::set_des_q_single_rad(uint servo, float q)
+void EdubotHW::set_des_q_single_rad(uint servo, double q)
 {
     assert(servo <= this->n);
     std::string cmd = this->format_cmd(servo,
@@ -86,18 +88,25 @@ void EdubotHW::set_des_q_single_rad(uint servo, float q)
     this->write_cmd(cmd);
     this->q.at(servo) = q;
 }
-
+void EdubotHW::set_des_qdot_single_rad(uint servo, double qdot)
+{
+    this->qdot.at(servo) = qdot;
+}
 /* Set a single servo reference position
 *   @param servo: The servo index
 *   @param     q: The position in degrees */
-void EdubotHW::set_des_q_single_deg(uint servo, float q)
+void EdubotHW::set_des_q_single_deg(uint servo, double q)
 {
     this->set_des_q_single_rad(servo, q * RAD2DEG);
 }
-
+void EdubotHW::set_des_qdot_single_deg(uint servo, double qdot)
+{
+    this->set_des_qdot_single_rad(servo, qdot * RAD2DEG);
+    
+}
 /* Set all servo reference position
 *   @param     q: The position in rad */
-void EdubotHW::set_des_q_rad(const std::vector<float> & q)
+void EdubotHW::set_des_q_rad(const std::vector<double> & q)
 {
     assert(q.size() == this->n);
     std::string cmd = "";
@@ -112,11 +121,16 @@ void EdubotHW::set_des_q_rad(const std::vector<float> & q)
 
     this->write_cmd(cmd);
 }
+void EdubotHW::set_des_qdot_rad(const std::vector<double> & qdot)
+{
+    assert(qdot.size() == this->n);
+    this->qdot = qdot;
+}
 
 
 /* Set all servo reference position
 *   @param     q: The position in degree */
-void EdubotHW::set_des_q_deg(const std::vector<float> & q)
+void EdubotHW::set_des_q_deg(const std::vector<double> & q)
 {
     assert(q.size() == this->n);
     std::string cmd = "";
@@ -132,6 +146,14 @@ void EdubotHW::set_des_q_deg(const std::vector<float> & q)
     this->write_cmd(cmd);
 }
 
+void EdubotHW::set_des_qdot_deg(const std::vector<double> & qdot)
+{
+    assert(qdot.size() == this->n);
+    for(uint i=0; i < this->n; i++)
+    {
+        this->qdot.at(i) = qdot.at(i) * DEG2RAD;
+    }
+}
 void EdubotHW::homing()
 {
     std::string cmd = "";
@@ -156,12 +178,12 @@ void EdubotHW::set_des_gripper(GripperState state)
     if(state == GripperState::Open)
     {
         cmd = this->format_cmd(4, 900, this->GRIPPER_SPEED);
-        this->gripper = std::vector<float>{GripperState::Open};
+        this->gripper = std::vector<double>{GripperState::Open};
     }
     else if(state == GripperState::Closed)
     {
         cmd = this->format_cmd(4, 2500, this->GRIPPER_SPEED);
-        this->gripper = std::vector<float>{GripperState::Closed};
+        this->gripper = std::vector<double>{GripperState::Closed};
     }
     cmd += "\r";
 
@@ -173,7 +195,7 @@ void EdubotHW::set_des_gripper(GripperState state)
  * 0 = fully closed
  * 1 = fully open
  */
-void EdubotHW::set_des_gripper(float o)
+void EdubotHW::set_des_gripper(double o)
 {
     int opened = 2200;
     int closed = 500;
@@ -184,13 +206,13 @@ void EdubotHW::set_des_gripper(float o)
     if(o <= 0)
     {
         cmd = this->format_cmd(4, closed, this->GRIPPER_SPEED);
-        this->gripper = std::vector<float>{(float)GripperState::Closed};
+        this->gripper = std::vector<double>{(float)GripperState::Closed};
     }
     /* Gripper shall be fully open */
     else if(o >= 1)
     {
         cmd = this->format_cmd(4, opened, this->GRIPPER_SPEED);
-        this->gripper = std::vector<float>{(float)GripperState::Open};
+        this->gripper = std::vector<double>{(float)GripperState::Open};
     }
     /* Opening somewhere in between */
     else
@@ -198,7 +220,7 @@ void EdubotHW::set_des_gripper(float o)
         cmd = this->format_cmd(4,
                 closed + o*(opened - closed),
                 this->GRIPPER_SPEED);
-        this->gripper = std::vector<float>{o};
+        this->gripper = std::vector<double>{o};
     }
     cmd += "\r";
 
@@ -212,7 +234,7 @@ void EdubotHW::set_des_gripper(float o)
 *            
 *  @returns number of ticks equivalent to the rad angle
 */
-int EdubotHW::RAD_2_TICKS(uint servo, float rad)
+int EdubotHW::RAD_2_TICKS(uint servo, double rad)
 {
     return (this->MAX.at(servo) - this->MIN.at(servo)) * (rad / this->RANGE.at(servo)  + 0.5) 
                     + this->MIN.at(servo);

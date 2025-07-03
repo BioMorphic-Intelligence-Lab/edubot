@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(robot_core REQUIRED)
+find_package(robot_sim REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -29,7 +30,7 @@ target_compile_features(edubot_hw PUBLIC c_std_99 cxx_std_17)  # Require C99 and
 
 add_executable(edubot_sim src/edubot_sim.cpp)
 ament_target_dependencies(edubot_sim
-    robot_core Eigen3)
+    robot_sim Eigen3)
 target_include_directories(edubot_sim PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/edubot>
   $<INSTALL_INTERFACE:include>)
