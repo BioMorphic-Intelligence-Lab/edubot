@@ -24,6 +24,9 @@ EdubotHW::EdubotHW(std::string ser, int baud, int speed, int gripper_speed):
     /* Bring to initial state */
     this->homing();
     this->set_des_gripper(GripperState::Open);
+
+    /* Ensure mode is set to position */
+    this->mode = Mode::Position; 
 }
 
 EdubotHW::~EdubotHW()
@@ -31,6 +34,30 @@ EdubotHW::~EdubotHW()
     /* Close the serial port and delete the serial port pointer */
     if (this->serial->is_open()) this->serial->close();
     delete this->serial;
+}
+
+void EdubotHW::set_mode_callback(
+    const std::shared_ptr<robot_core::srv::SetMode::Request> request,
+    std::shared_ptr<robot_core::srv::SetMode::Response> response
+)
+{
+    // Transform everything to lowercase
+    std::string str = request->mode;
+    for (char& c : str) {
+        c = std::tolower(c);
+    }
+
+    bool success = false;
+    if (str.compare("position") == 0) {
+        this->mode = Mode::Position;
+        success = true;
+        RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
+    } else if (str.compare("velocity") == 0) {    
+        RCLCPP_INFO(this->get_logger(), "Velocity Mode not supported on this HW!");
+    } else {
+        RCLCPP_INFO(this->get_logger(), "Unknown mode '%s'!", str.c_str());
+    }
+    response->success = success;
 }
 
 void EdubotHW::init_q()

@@ -59,6 +59,11 @@ protected:
     std::vector<std::string> names;
     std::vector<float> gripper;
 
+    virtual void set_mode_callback(
+        const std::shared_ptr<robot_core::srv::SetMode::Request> request,
+        std::shared_ptr<robot_core::srv::SetMode::Response> response
+    );
+
 private:
     
     rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_cmd_sub;
@@ -70,10 +75,7 @@ private:
 
     void cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
     void timer_callback(); 
-    void set_mode_callback(
-        const std::shared_ptr<robot_core::srv::SetMode::Request> request,
-        std::shared_ptr<robot_core::srv::SetMode::Response> response
-    );
+
 
     const float _MAX_GRIPPER;   
 };

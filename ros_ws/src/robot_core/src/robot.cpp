@@ -71,6 +71,8 @@ void Robot::set_mode_callback(
     this->mode = Mode::Velocity;
     success = true;
     RCLCPP_INFO(this->get_logger(), "Switched to Velocity Mode!");
+  } else {
+    RCLCPP_INFO(this->get_logger(), "Unknown mode '%s'!", str.c_str());
   }
 
   response->success = success;

@@ -25,6 +25,12 @@ protected:
 
     void homing()  override;
 
+    void set_mode_callback(
+        const std::shared_ptr<robot_core::srv::SetMode::Request> request,
+        std::shared_ptr<robot_core::srv::SetMode::Response> response
+    ) override;
+
+
 private:
 
     const std::vector<float> HOME;
