@@ -47,9 +47,11 @@ LeRobotHW::LeRobotHW(std::string ser,
         this->_driver->setHomePosition(IDs.at(i), zero_positions.at(i));
     }
 
+
     /* Bring to initial state */
     this->homing();
     this->set_des_gripper(GripperState::Closed);
+
 }
 
 void LeRobotHW::init_q()
@@ -172,15 +174,18 @@ void LeRobotHW::set_mode_callback(
     if (str.compare("position") == 0) {
         this->mode = Mode::Position;
         for(uint i = 0; i < this->n; i++) {
+            this->_driver->setReferencePosition(this->IDs.at(i), this->q_des.at(i));
+            this->_driver->setReferenceVelocity(this->IDs.at(i), 0.0);
+            /* ToDo this switch breaks something. TBD*/
             this->_driver->setOperatingMode(this->IDs.at(i), DriverMode::POSITION);
             this->_driver->writeTorqueEnable(this->IDs.at(i), true);
-            this->_driver->setReferencePosition(this->IDs.at(i), this->q_des.at(i));
         }
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
     } else if (str.compare("velocity") == 0) {    
         // Ensure we have the correct amount of values in the cmds vector
         while(this->qdot.size() < this->n) this->qdot.push_back(0);
+        while(this->qdot_des.size() < this->n) this->qdot_des.push_back(0);
 
         this->mode = Mode::Velocity;
         for(uint i = 0; i < this->n; i++) {
