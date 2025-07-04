@@ -11,6 +11,27 @@ LeRobotHW::LeRobotHW(std::string ser,
           DEG2RAD * 60, DEG2RAD * 0}),
     IDs(ids)
 {
+    this->declare_parameter("zero_positions",
+        std::vector<int>({1995, 2761, 1957, 1554, 3013, 2050})
+    );
+    this->declare_parameter("ids",
+        std::vector<int>({11, 12, 13, 14, 15, 16})
+    );
+    this->declare_parameter("gripper_open", M_PI_2);
+    this->declare_parameter("gripper_closed", 0.0);
+
+    this->gripper_open = this->get_parameter("gripper_open").as_double();
+    this->gripper_closed = this->get_parameter("gripper_closed").as_double();
+
+    std::vector<long int> ids_long = this->get_parameter("ids").as_integer_array();
+    std::vector<long int> zero_positions = this->get_parameter("zero_positions").as_integer_array();
+
+    for(uint8_t i = 0; i < ids_long.size(); i++)
+    {
+        this->IDs.at(i) = static_cast<uint8_t>(ids_long.at(i));
+    }
+
+
     /* Init initial state and names */
     this->init_q();
     this->init_names();
@@ -20,9 +41,15 @@ LeRobotHW::LeRobotHW(std::string ser,
         ser, baud, frequency, ids, homing, logging
     );
  
+    /* Set zero positions */
+    for(uint8_t i = 0; i < this->n + 1; i++)
+    {
+        this->_driver->setHomePosition(IDs.at(i), zero_positions.at(i));
+    }
+
     /* Bring to initial state */
     this->homing();
-    this->set_des_gripper(GripperState::Open);
+    this->set_des_gripper(GripperState::Closed);
 }
 
 void LeRobotHW::init_q()
@@ -90,10 +117,12 @@ void LeRobotHW::set_des_gripper(GripperState state)
     if(state == GripperState::Open)
     {
         this->gripper = std::vector<double>{(float)GripperState::Open};
+        this->set_des_q_single_rad(this->IDs.size() - 1, this->gripper_open);
     }
     else if(state == GripperState::Closed)
     {
         this->gripper = std::vector<double>{(float)GripperState::Closed};
+        this->set_des_q_single_rad(this->IDs.size() - 1, this->gripper_closed);
     }
 }
 
@@ -107,21 +136,19 @@ void LeRobotHW::set_des_gripper(double o)
     /* Gripper shall be fully closed */
     if(o <= 0)
     {
-        this->gripper = std::vector<double>({
-             (float)GripperState::Closed
-        });
+        this->set_des_gripper(GripperState::Closed);
     }
     /* Gripper shall be fully open */
     else if(o >= 1)
     {
-        this->gripper = std::vector<double>({
-             (float)GripperState::Open
-        });
+        this->set_des_gripper(GripperState::Open);
     }
     /* Opening somewhere in between */
     else
     {
         this->gripper = std::vector<double>({o});
+        this->set_des_q_single_rad(this->IDs.size() - 1, 
+            gripper_closed + o * (gripper_open - gripper_closed));
     }
 }
 
@@ -141,6 +168,7 @@ void LeRobotHW::set_mode_callback(
         this->mode = Mode::Position;
         for(uint i = 0; i < this->n; i++) {
             this->_driver->setOperatingMode(this->IDs.at(i), DriverMode::POSITION);
+            this->_driver->setReferencePosition(this->IDs.at(i), this->q.at(i));
         }
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
@@ -151,7 +179,9 @@ void LeRobotHW::set_mode_callback(
         this->mode = Mode::Velocity;
         for(uint i = 0; i < this->n; i++) {
             this->_driver->setOperatingMode(this->IDs.at(i), DriverMode::VELOCITY);
+            this->_driver->setReferenceVelocity(this->IDs.at(i), this->qdot.at(i));
         }
+
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Velocity Mode!");
     } else {

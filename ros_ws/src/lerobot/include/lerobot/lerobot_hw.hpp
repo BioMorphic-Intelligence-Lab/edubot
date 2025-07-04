@@ -8,7 +8,7 @@ public:
              int baud=115200,
              double frequency=50.0,
              std::vector<uint8_t> ids={11, 12, 13, 14, 15, 16},
-             bool homing=true,
+             bool homing=false,
              bool logging=false);
 
 protected:
@@ -41,8 +41,9 @@ protected:
 
 private:
     const std::vector<double> HOME;
-    const std::vector<uint8_t> IDs;
-
+    double gripper_open, gripper_closed;
+    std::vector<uint8_t> IDs;  
+    
     // Driver
     std::shared_ptr<FeetechServo> _driver;
 };
