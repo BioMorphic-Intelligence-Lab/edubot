@@ -54,7 +54,10 @@ LeRobotHW::LeRobotHW(std::string ser,
 
 void LeRobotHW::init_q()
 {
-    this->q = {0, 0, 0, 0, 0};
+    this->q        = {0, 0, 0, 0, 0};
+    this->qdot     = {0, 0, 0, 0, 0};
+    this->q_des    = {0, 0, 0, 0, 0, 0};
+    this->qdot_des = {0, 0, 0, 0, 0, 0};
 }
 
 void LeRobotHW::init_names()
@@ -65,11 +68,13 @@ void LeRobotHW::init_names()
 void LeRobotHW::set_des_q_single_rad(uint servo, double q)
 {
     this->_driver->setReferencePosition(this->IDs.at(servo), q);
+    this->q_des.at(servo) = q;
 }
 
 void LeRobotHW::set_des_qdot_single_rad(uint servo, double qdot)
 {
     this->_driver->setReferenceVelocity(this->IDs.at(servo), qdot);
+    this->qdot_des.at(servo) = qdot;
 }
 void LeRobotHW::set_des_q_single_deg(uint servo, double q)
 {
@@ -168,7 +173,8 @@ void LeRobotHW::set_mode_callback(
         this->mode = Mode::Position;
         for(uint i = 0; i < this->n; i++) {
             this->_driver->setOperatingMode(this->IDs.at(i), DriverMode::POSITION);
-            this->_driver->setReferencePosition(this->IDs.at(i), this->q.at(i));
+            this->_driver->writeTorqueEnable(this->IDs.at(i), true);
+            this->_driver->setReferencePosition(this->IDs.at(i), this->q_des.at(i));
         }
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
@@ -178,8 +184,9 @@ void LeRobotHW::set_mode_callback(
 
         this->mode = Mode::Velocity;
         for(uint i = 0; i < this->n; i++) {
+            this->_driver->setReferencePosition(this->IDs.at(i), this->q_des.at(i));
             this->_driver->setOperatingMode(this->IDs.at(i), DriverMode::VELOCITY);
-            this->_driver->setReferenceVelocity(this->IDs.at(i), this->qdot.at(i));
+            this->_driver->setReferenceVelocity(this->IDs.at(i), this->qdot_des.at(i));
         }
 
         success = true;

@@ -57,8 +57,7 @@ protected:
     virtual std::vector<double> get_gripper();
 
     uint n;
-    std::vector<double> q;
-    std::vector<double> qdot;
+    std::vector<double> q, q_des, qdot, qdot_des;
 
     Mode mode;
     std::vector<std::string> names;
