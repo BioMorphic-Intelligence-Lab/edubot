@@ -1,6 +1,6 @@
-# EduBot: The 4-DoF manipulator for Education
+# EduBot: The library for manipulators for Education
 
-This repository contains the drivers, visualization features and a simple simulation for the [Lynxmotion AL5A Arm](https://wiki.lynxmotion.com/info/wiki/lynxmotion/view/servo-erector-set-robots-kits/ses-v1-robots/ses-v1-arms/al5a/), all of which are implemented using the [ROS2](https://docs.ros.org/en/humble/index.html) middleware.
+This repository contains the drivers, visualization features and a simple simulation for [LeRobot](https://github.com/huggingface/lerobot) (and for legacy reasons also the [Lynxmotion AL5A Arm](https://wiki.lynxmotion.com/info/wiki/lynxmotion/view/servo-erector-set-robots-kits/ses-v1-robots/ses-v1-arms/al5a/)), all of which are implemented using the [ROS2](https://docs.ros.org/en/humble/index.html) middleware.
 
 ## Installation 
 
@@ -76,33 +76,36 @@ To allow the `ROS` programm to access the USB port connected to the eduBot you w
 
 ### Compilation
 
-The repository contains two folders: `cpp_impl` and `python_impl`. The former contains the driver, visualization, simulation and a simple control example of the robot while the latter only contains the control example. 
+The repository contains two folders: `ros_ws` and `testing`.
+The former contains the driver, visualization, simulation and a simple control example of the robot (in C++ and python) while the latter only contains plain testing scrips. 
 You can choose which language you would like to write your controller in using the code provided as an initial guideline.
-To compile each of the packages navigate into the folder, source your `ros` installation and call the `colcon` compilation, e.g.
+To compile the ROS workspace, source your ROS installation and call the `colcon` build command as follows:
 
-        cd cpp_impl
+        cd edubot/ros_ws
+
         # For ROS 2 Humble users
         source /opt/ros/humble/setup.bash
+        
         # For ROS 2 Jazzy users
         source /opt/ros/jazzy/setup.bash
+        
+        # Call build command
         colcon build
 
 ### Running
 
 Once the package is compiled, source by calling:
 
-      # Go up one directory from cpp_impl
-      cd ..
       # Source the local setup
-      source cpp_impl/install/setup.bash
+      source install/setup.bash
 
 You can run start the simulation or the driver for the robot with the following commands
 
  Command                            |  Effect 
 ------------------------------------|---------------------------------------------------
-`ros2 launch edubot sim.launch.py`  |  Launches the simulation and `rviz` visualization
-`ros2 launch edubot rviz.launch.py` |  Launches the `rviz` visualization and a joint position interface which lets you play with the robot
-`ros2 run edubot edubot_hw`         |  Starts the Hardware driver for the robot
+`ros2 launch lerobot sim.launch.py`  |  Launches the simulation and `rviz` visualization
+`ros2 launch lerobot rviz.launch.py` |  Launches the `rviz` visualization and a joint position interface which lets you play with the robot
+`ros2 run lerobot lerobot_hw`         |  Starts the Hardware driver for the robot
 `ros2 run controllers example_traj` |  Starts the an controller that commands a periodic example trajectory
 
 ### For Virtual Machine Users
