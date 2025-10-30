@@ -169,6 +169,9 @@
     </visual>
   </link>
 
+  <!-- Center of gripper -->
+  <link name="gripper_center"/>
+
   <!-- Link jaw -->
   <link name="jaw">
     <inertial>
@@ -228,6 +231,13 @@
     <origin xyz="0 -0.0601 0" rpy="0 -1.57079 0"/>
     <axis xyz="0 1 0"/>
     <limit lower="-3.14158" upper="3.14158" effort="35" velocity="1"/>
+  </joint>
+
+  <!-- Fixed joint from gripper to gripper center -->
+  <joint name="Gripper_Center_Fixed" type="fixed">
+    <parent link="gripper"/>
+    <child link="gripper_center"/>
+    <origin xyz="0.0 -0.075 0" rpy="0 0 0"/>
   </joint>
 
   <!-- Joint from gripper to jaw -->

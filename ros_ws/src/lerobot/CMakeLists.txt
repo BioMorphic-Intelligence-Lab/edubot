@@ -12,6 +12,11 @@ find_package(robot_sim REQUIRED)
 find_package(feetech_cpp_lib REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+find_package(visualization_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+
 add_executable(lerobot_sim src/lerobot_sim.cpp)
 ament_target_dependencies(lerobot_sim
     robot_sim Eigen3)
@@ -28,6 +33,15 @@ target_include_directories(lerobot_hw PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_compile_features(lerobot_hw PUBLIC c_std_99 cxx_std_17)
 
+add_executable(path_publisher src/path_publisher.cpp)
+ament_target_dependencies(path_publisher
+    rclcpp geometry_msgs visualization_msgs sensor_msgs nav_msgs tf2_ros)
+target_include_directories(path_publisher PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lerobot>
+  $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(path_publisher PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -41,7 +55,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(TARGETS lerobot_sim lerobot_hw#path_publisher
+install(TARGETS lerobot_sim lerobot_hw path_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY 
