@@ -8,10 +8,10 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 class ExampleTraj(Node):
 
     def __init__(self):
-        super().__init__('minimal_publisher')
+        super().__init__('example_trajectory')
 
-        self._HOME = [np.deg2rad(0), np.deg2rad(-40),
-                     np.deg2rad(30), np.deg2rad(-30),
+        self._HOME = [np.deg2rad(0), np.deg2rad(70),
+                     np.deg2rad(-40), np.deg2rad(-60),
                      np.deg2rad(0)]
         self._beginning = self.get_clock().now()
         self._publisher = self.create_publisher(JointTrajectory, 'joint_cmds', 10)
@@ -28,7 +28,7 @@ class ExampleTraj(Node):
         point = JointTrajectoryPoint()
         point.positions = [self._HOME[0] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
                            self._HOME[1] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
-                           self._HOME[2] + 0.125 * np.pi * (np.sin(2 * np.pi / 10.0 * dt) - 1),
+                           self._HOME[2] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
                            self._HOME[3] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
                            self._HOME[4] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
                            0.5 * np.sin(2 * np.pi / 10.0 * dt) + 0.5]

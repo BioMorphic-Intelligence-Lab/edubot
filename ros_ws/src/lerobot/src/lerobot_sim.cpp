@@ -2,8 +2,8 @@
 
 LeRobotSim::LeRobotSim(): 
     RobotSim(5, M_PI_2),
-    HOME({DEG2RAD * 0, -DEG2RAD * 105, DEG2RAD * 70,
-          DEG2RAD * 60, DEG2RAD * 0})
+    HOME({DEG2RAD * 0, DEG2RAD * 105, -DEG2RAD * 70,
+          -DEG2RAD * 60, DEG2RAD * 0})
 {
     /* Init initial state and names */
     this->init_q();
@@ -11,7 +11,7 @@ LeRobotSim::LeRobotSim():
  
     /* Bring to initial state */
     this->homing();
-    this->set_des_gripper(GripperState::Open);
+    this->set_des_gripper(GripperState::Closed);
 }
 
 void LeRobotSim::init_q()

@@ -9,9 +9,9 @@ ExampleTraj::ExampleTraj() :
 
     // Declare all parameters
     this->declare_parameter("home",
-      std::vector<double>{DEG2RAD * 0, DEG2RAD * -40,
-                          DEG2RAD * 30, DEG2RAD * -30,
-                          DEG2RAD * 0});
+      std::vector<double>{ DEG2RAD * 0, DEG2RAD * 70,
+                          -DEG2RAD * 40, -DEG2RAD * 50,
+                           DEG2RAD * 0});
     this->home = this->get_parameter("home").as_double_array();
 
     this->_beginning = this->now();
