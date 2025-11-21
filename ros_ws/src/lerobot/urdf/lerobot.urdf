@@ -41,7 +41,7 @@
   <joint name="world_joint" type="fixed">
     <parent link="world"/>
     <child link="base"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 3.14159"/>
   </joint>
 
   <!-- Link shoulder -->
@@ -52,18 +52,21 @@
       <inertia ixx="5.94278e-05" ixy="0" ixz="0" iyy="5.89975e-05" iyz="0" izz="3.13712e-05"/>
     </inertial>
     <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 0.0 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Rotation_Pitch.stl"/>
       </geometry>
       <material name="3d_printed"/>
     </visual>
     <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 0.0 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Rotation_Pitch_Motor.stl"/>
       </geometry>
       <material name="sts3215"/>
     </visual>
     <collision>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 0.0 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Rotation_Pitch.stl"/>
       </geometry>
@@ -78,18 +81,21 @@
       <inertia ixx="0.000213312" ixy="0" ixz="0" iyy="0.000167164" iyz="0" izz="7.01522e-05"/>
     </inertial>
     <visual>
+      <origin xyz="0 0 0" rpy="0 1.57079 -1.57079"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Upper_Arm.stl"/>
       </geometry>
       <material name="3d_printed"/>
     </visual>
     <visual>
+      <origin xyz="0 0 0" rpy="0 1.57079 -1.57079"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Upper_Arm_Motor.stl"/>
       </geometry>
       <material name="sts3215"/>
     </visual>
     <collision>
+      <origin xyz="0 0 0" rpy="0 1.57079 -1.57079"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Upper_Arm.stl"/>
       </geometry>
@@ -104,18 +110,21 @@
       <inertia ixx="0.000138803" ixy="0" ixz="0" iyy="0.000107748" iyz="0" izz="4.84242e-05"/>
     </inertial>
     <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 1.57079 0.0"/> 
       <geometry>
         <mesh filename="package://lerobot/meshes/Lower_Arm.stl"/>
       </geometry>
       <material name="3d_printed"/>
     </visual>
     <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 1.57079 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Lower_Arm_Motor.stl"/>
       </geometry>
       <material name="sts3215"/>
     </visual>
     <collision>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 1.57079 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Lower_Arm.stl"/>
       </geometry>
@@ -130,18 +139,21 @@
       <inertia ixx="3.45403e-05" ixy="0" ixz="0" iyy="2.39041e-05" iyz="0" izz="1.94704e-05"/>
     </inertial>
     <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 1.57079 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Wrist_Pitch_Roll.stl"/>
       </geometry>
       <material name="3d_printed"/>
     </visual>
     <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 1.57079 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Wrist_Pitch_Roll_Motor.stl"/>
       </geometry>
       <material name="sts3215"/>
     </visual>
     <collision>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57079 1.57079 0.0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Wrist_Pitch_Roll.stl"/>
       </geometry>
@@ -156,12 +168,14 @@
       <inertia ixx="5.03136e-05" ixy="0" ixz="0" iyy="4.64098e-05" iyz="0" izz="2.72961e-05"/>
     </inertial>
     <visual>
+      <origin xyz="0.0 0 0" rpy="-1.57079 0 0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Fixed_Jaw.stl"/>
       </geometry>
       <material name="3d_printed"/>
     </visual>
     <visual>
+      <origin xyz="0.0 0 0" rpy="-1.57079 0 0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Fixed_Jaw_Motor.stl"/>
       </geometry>
@@ -180,6 +194,7 @@
       <inertia ixx="1.11265e-05" ixy="0" ixz="0" iyy="8.99651e-06" iyz="0" izz="2.99548e-06"/>
     </inertial>
     <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Moving_Jaw.stl"/>
       </geometry>
@@ -192,8 +207,8 @@
   <joint name="Shoulder_Rotation" type="revolute">
     <parent link="base"/>
     <child link="shoulder"/>
-    <origin xyz="0 -0.0452 0.0165" rpy="1.57079 0 0"/>
-    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.0452 0.0165" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
     <limit lower="-2" upper="2" effort="35" velocity="1"/>
   </joint>
 
@@ -201,35 +216,35 @@
   <joint name="Shoulder_Pitch" type="revolute">
     <parent link="shoulder"/>
     <child link="upper_arm"/>
-    <origin xyz="0 0.1025 0.0306" rpy="0.0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit lower="0" upper="3.5" effort="35" velocity="1"/>
+    <origin xyz="0 -0.0306 0.1025" rpy="0.0 -1.57079 0.0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="35" velocity="1"/>
   </joint>
 
   <!-- Joint from upper_arm to lower_arm -->
   <joint name="Elbow" type="revolute">
     <parent link="upper_arm"/>
     <child link="lower_arm"/>
-    <origin xyz="0 0.11257 0.028" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit lower="-3.14158" upper="0" effort="35" velocity="1"/>
+    <origin xyz="0.11257 -0.028 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.58" upper="1.58" effort="35" velocity="1"/>
   </joint>
 
   <!-- Joint from lower_arm to wrist -->
   <joint name="Wrist_Pitch" type="revolute">
     <parent link="lower_arm"/>
     <child link="wrist"/>
-    <origin xyz="0 0.0052 0.1349" rpy="-1.57079 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit lower="-2.5" upper="1.2" effort="35" velocity="1"/>
+    <origin xyz="0.0052 -0.1349 0" rpy="0 0 1.57079"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="35" velocity="1"/>
   </joint>
 
   <!-- Joint from wrist to gripper -->
   <joint name="Wrist_Roll" type="revolute">
     <parent link="wrist"/>
     <child link="gripper"/>
-    <origin xyz="0 -0.0601 0" rpy="0 -1.57079 0"/>
-    <axis xyz="0 1 0"/>
+    <origin xyz="-0.0601 0 0" rpy="0 -1.57079 0"/>
+    <axis xyz="0 0 1"/>
     <limit lower="-3.14158" upper="3.14158" effort="35" velocity="1"/>
   </joint>
 
@@ -237,14 +252,14 @@
   <joint name="Gripper_Center_Fixed" type="fixed">
     <parent link="gripper"/>
     <child link="gripper_center"/>
-    <origin xyz="0.0 -0.075 0" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 0.075" rpy="0 0 0"/>
   </joint>
 
   <!-- Joint from gripper to jaw -->
   <joint name="Gripper" type="revolute">
     <parent link="gripper"/>
     <child link="jaw"/>
-    <origin xyz="-0.0202 -0.0244 0" rpy="0 3.14158 0.15"/>
+    <origin xyz="-0.0202 0 0.0244" rpy="1.57079 3.14158 0.0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-0.2" upper="2.0" effort="35" velocity="1"/>
   </joint>
