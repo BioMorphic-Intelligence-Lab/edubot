@@ -15,7 +15,9 @@ def generate_launch_description():
             package='lerobot',
             executable='lerobot_hw',
             name='lerobot',
-            parameters=[param_file],
+            parameters=[
+                param_file,
+                {'mode': 'velocity'}],
             output='screen'
         )
     ])

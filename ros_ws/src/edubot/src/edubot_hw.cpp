@@ -227,6 +227,12 @@ void EdubotHW::set_des_gripper(double o)
     this->write_cmd(cmd);
 }
 
+void EdubotHW::set_des_gripper_vel(double o)
+{
+    (void)o;
+    // Not implemented for EdubotHW
+}
+
 /* Function that uses the min, max and range to compute the 
 *  equivalent radians for a given number of ticks
 *   @param servo: Servo index

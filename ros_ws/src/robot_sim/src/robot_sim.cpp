@@ -8,7 +8,7 @@ RobotSim::RobotSim(uint n, double gripper_max, double sim_f)
     this->_sim_timer = this->create_wall_timer(
       std::chrono::milliseconds(static_cast<int>(1000.0 * this->_dt)),
       std::bind(&RobotSim::timer_callback, this)
-    );
+    );   
 }
 
 RobotSim::~RobotSim(){};
@@ -20,10 +20,14 @@ void RobotSim::timer_callback()
     case Mode::Position:
         break;
     case Mode::Velocity:
-        for(uint i = 0; i< this->n; i++)
+        for(uint i = 0; i < this->n; i++)
         {
             this->q.at(i) += this->qdot.at(i) * this->_dt;
         }
+        this->set_des_gripper(
+            this->get_gripper().at(0) 
+                + this->get_gripper_vel().at(0) * this->_dt
+        );
         break;
     default:
         break;
@@ -117,4 +121,11 @@ void RobotSim::set_des_gripper(double o)
     {
         this->gripper = std::vector<double>({o});
     }
+}
+
+
+/* Set the currently desired gripper velocity */
+void RobotSim::set_des_gripper_vel(double o)
+{
+   this->gripper_vel = std::vector<double>({o});
 }

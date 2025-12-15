@@ -24,10 +24,13 @@ protected:
 
     void set_des_gripper(GripperState state) override;
     void set_des_gripper(double o) override;
+    void set_des_gripper_vel(double o) override;
 
     std::vector<double> get_q() override;
     std::vector<double> get_qdot() override;
     std::vector<double> get_gripper() override;
+
+    bool set_mode(std::string mode);
 
     void set_mode_callback(
         const std::shared_ptr<robot_core::srv::SetMode::Request> request,

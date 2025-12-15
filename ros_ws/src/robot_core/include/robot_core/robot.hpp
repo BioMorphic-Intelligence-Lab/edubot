@@ -46,6 +46,7 @@ protected:
 
     virtual void set_des_gripper(GripperState state) = 0;
     virtual void set_des_gripper(double o) = 0;
+    virtual void set_des_gripper_vel(double o) = 0;
 
     virtual void homing() = 0;
 
@@ -55,6 +56,7 @@ protected:
     virtual std::vector<double> get_q();
     virtual std::vector<double> get_qdot();
     virtual std::vector<double> get_gripper();
+    virtual std::vector<double> get_gripper_vel();
 
     uint n;
     std::vector<double> q, q_des, qdot, qdot_des;
@@ -62,6 +64,7 @@ protected:
     Mode mode;
     std::vector<std::string> names;
     std::vector<double> gripper;
+    std::vector<double> gripper_vel;
 
     virtual void set_mode_callback(
         const std::shared_ptr<robot_core::srv::SetMode::Request> request,

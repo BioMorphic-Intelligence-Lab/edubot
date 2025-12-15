@@ -24,6 +24,9 @@ Robot::Robot(uint n, double max_gripper):
       this->mode = Mode::Velocity;
     }
 
+    while(this->qdot.size() < this->n) this->qdot.push_back(0);
+    while(this->gripper_vel.size() < 1) this->gripper_vel.push_back(0);
+
     this->joint_cmd_sub = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
         this->get_parameter("sub_topic").as_string(),
         10,
@@ -113,7 +116,9 @@ void Robot::cmd_callback(const trajectory_msgs::msg::JointTrajectory::SharedPtr 
         }
 
         this->set_des_qdot_rad(velocities);
-
+        /* If this trajectory setpoint also contains gripper commands */
+        if(velocities.size() == this->n + 1)
+            this->set_des_gripper_vel(velocities.at(n));
         break;
       }
     }
@@ -131,6 +136,7 @@ void Robot::timer_callback()
 
   // Get gripper state scaled by its max opening value
   std::vector<double> gripper = this->get_gripper();
+  std::vector<double> gripper_vel = this->get_gripper_vel();
 
   // We may have to append it twice since left gripper and right 
   // Gripper are treated independently by rviz
@@ -158,6 +164,11 @@ std::vector<double> Robot::get_qdot()
 std::vector<double> Robot::get_gripper()
 {
     return this->gripper;
+}
+
+std::vector<double> Robot::get_gripper_vel()
+{
+    return this->gripper_vel;
 }
 
 

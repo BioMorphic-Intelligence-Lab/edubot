@@ -133,6 +133,7 @@ void LeRobotHW::set_des_gripper(GripperState state)
     }
 }
 
+
 /* Set the currently desired gripper opening 
  * @param o: Opening degree 
  * 0 = fully closed
@@ -159,19 +160,15 @@ void LeRobotHW::set_des_gripper(double o)
     }
 }
 
-void LeRobotHW::set_mode_callback(
-    const std::shared_ptr<robot_core::srv::SetMode::Request> request,
-    std::shared_ptr<robot_core::srv::SetMode::Response> response
-)
+void LeRobotHW::set_des_gripper_vel(double o)
 {
-    // Transform everything to lowercase
-    std::string str = request->mode;
-    for (char& c : str) {
-        c = std::tolower(c);
-    }
+    this->gripper_vel.at(0) = o;
+}
 
+bool LeRobotHW::set_mode(std::string mode)
+{
     bool success = false;
-    if (str.compare("position") == 0) {
+    if (mode.compare("position") == 0) {
         this->mode = Mode::Position;
         for(uint i = 0; i < this->n; i++) {
             this->_driver->setReferencePosition(this->IDs.at(i), this->q_des.at(i));
@@ -182,7 +179,7 @@ void LeRobotHW::set_mode_callback(
         }
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
-    } else if (str.compare("velocity") == 0) {    
+    } else if (mode.compare("velocity") == 0) {    
         // Ensure we have the correct amount of values in the cmds vector
         while(this->qdot.size() < this->n) this->qdot.push_back(0);
         while(this->qdot_des.size() < this->n) this->qdot_des.push_back(0);
@@ -197,10 +194,24 @@ void LeRobotHW::set_mode_callback(
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Velocity Mode!");
     } else {
-        RCLCPP_INFO(this->get_logger(), "Unknown mode '%s'!", str.c_str());
+        RCLCPP_INFO(this->get_logger(), "Unknown mode '%s'!", mode.c_str());
     }
 
-    response->success = success;
+    return success;
+}
+
+void LeRobotHW::set_mode_callback(
+    const std::shared_ptr<robot_core::srv::SetMode::Request> request,
+    std::shared_ptr<robot_core::srv::SetMode::Response> response
+)
+{
+    // Transform everything to lowercase
+    std::string str = request->mode;
+    for (char& c : str) {
+        c = std::tolower(c);
+    } 
+
+    response->success = this->set_mode(str);
 }
 
 void LeRobotHW::homing()

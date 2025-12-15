@@ -19,6 +19,7 @@ protected:
 
     void set_des_gripper(GripperState state) override;
     void set_des_gripper(double o) override;
+    void set_des_gripper_vel(double o) override;
 
     void timer_callback();
     rclcpp::TimerBase::SharedPtr _sim_timer;
