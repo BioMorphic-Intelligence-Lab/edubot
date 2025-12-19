@@ -10,8 +10,8 @@ class ExampleTraj(Node):
     def __init__(self):
         super().__init__('example_trajectory')
 
-        self._HOME = [np.deg2rad(0), np.deg2rad(70),
-                     np.deg2rad(-40), np.deg2rad(-60),
+        self._HOME = [np.deg2rad(0), np.deg2rad(-105),
+                     np.deg2rad(70), np.deg2rad(60),
                      np.deg2rad(0)]
         self._beginning = self.get_clock().now()
         self._publisher = self.create_publisher(JointTrajectory, 'joint_cmds', 10)

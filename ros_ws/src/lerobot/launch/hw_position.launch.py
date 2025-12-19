@@ -8,7 +8,7 @@ def generate_launch_description():
     package_dir = get_package_share_directory('lerobot')
     
     # Path to parameter file
-    param_file = os.path.join(package_dir, 'config', 'pink_robot.yaml')
+    param_file = os.path.join(package_dir, 'config', 'robot_hw.yaml')
     
     return LaunchDescription([
         Node(

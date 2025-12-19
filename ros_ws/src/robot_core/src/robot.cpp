@@ -158,7 +158,7 @@ std::vector<double> Robot::get_qdot()
 {
   /* By default we assume we have no velocity feedback
    * and simply return zero */
-  return std::vector<double>(this->n, 0.0);
+  return this->qdot;
 }
 
 std::vector<double> Robot::get_gripper()

@@ -12,7 +12,7 @@ LeRobotHW::LeRobotHW(std::string ser,
     IDs(ids)
 {
     this->declare_parameter("zero_positions",
-        std::vector<int>({1995, 2761, 1957, 1554, 3013, 2050})
+        std::vector<int>({1950, 1950, 1950, 2048, 2048, 2048})
     );
     this->declare_parameter("ids",
         std::vector<int>({11, 12, 13, 14, 15, 16})

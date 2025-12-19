@@ -9,16 +9,16 @@ ExampleTraj::ExampleTraj() :
 
     // Declare all parameters
     this->declare_parameter("home",
-      std::vector<double>{ DEG2RAD * 0, DEG2RAD * 70,
-                          -DEG2RAD * 40, -DEG2RAD * 50,
-                           DEG2RAD * 0});
+      std::vector<double>{DEG2RAD * 0, -DEG2RAD * 105,
+                          DEG2RAD * 70, DEG2RAD * 60,
+                          DEG2RAD * 0});
     this->home = this->get_parameter("home").as_double_array();
 
     this->_beginning = this->now();
     
     this->_publisher = this->create_publisher<trajectory_msgs::msg::JointTrajectory>("joint_cmds", 10);
     this->_timer = this->create_wall_timer(
-      75ms, std::bind(&ExampleTraj::_timer_callback, this));
+      10ms, std::bind(&ExampleTraj::_timer_callback, this));
 }
 
 void ExampleTraj::_timer_callback()
