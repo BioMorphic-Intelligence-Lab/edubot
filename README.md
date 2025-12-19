@@ -1,6 +1,6 @@
 # EduBot: The library for manipulators for Education
 
-This repository contains the drivers, visualization features and a simple simulation for [LeRobot](https://github.com/huggingface/lerobot) (and for legacy reasons also the [Lynxmotion AL5A Arm](https://wiki.lynxmotion.com/info/wiki/lynxmotion/view/servo-erector-set-robots-kits/ses-v1-robots/ses-v1-arms/al5a/)), all of which are implemented using the [ROS2](https://docs.ros.org/en/humble/index.html) middleware.
+This repository contains the drivers, visualization features and a simple simulation for [LeRobot](https://github.com/huggingface/lerobot) (and for legacy reasons also the [Lynxmotion AL5A Arm](https://wiki.lynxmotion.com/info/wiki/lynxmotion/view/servo-erector-set-robots-kits/ses-v1-robots/ses-v1-arms/al5a/), in its designated branch), all of which are implemented using the [ROS2](https://docs.ros.org/en/humble/index.html) middleware.
 
 ## Installation
 
@@ -135,7 +135,7 @@ Example implementation can be found [here](https://www.youtube.com/watch?v=h-EOH
 
 ## Issues
 
-If any issues with this software occur, please don't hesitate to use the [Issues](https://github.com/BioMorphic-Intelligence-Lab/edubot/issues) pane within this repository.
+If any bugs or issues with this software occur, please don't hesitate to use the [Issues](https://github.com/BioMorphic-Intelligence-Lab/edubot/issues) pane within this repository. Please write a short description of the issue and some steps to reproduce it.
 
 Good Luck!
 

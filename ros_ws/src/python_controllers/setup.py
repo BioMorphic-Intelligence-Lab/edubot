@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'example_traj = python_controllers.example_traj:main'
+            'example_pos_traj = python_controllers.example_pos_traj:main',
+            'example_vel_traj = python_controllers.example_vel_traj:main',
         ],
     },
 )

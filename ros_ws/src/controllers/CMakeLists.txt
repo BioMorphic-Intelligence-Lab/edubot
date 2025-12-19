@@ -17,12 +17,12 @@ find_package(Eigen3 REQUIRED)
 # Add include directories
 include_directories($<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>)
 
-add_executable(example_traj src/example_traj.cpp)
-ament_target_dependencies(example_traj rclcpp trajectory_msgs)
-target_include_directories(example_traj PUBLIC
+add_executable(example_pos_traj src/example_pos_traj.cpp)
+ament_target_dependencies(example_pos_traj rclcpp trajectory_msgs)
+target_include_directories(example_pos_traj PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/controllers>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(example_traj PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(example_pos_traj PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 add_executable(example_vel_traj src/example_vel_traj.cpp)
 ament_target_dependencies(example_vel_traj rclcpp trajectory_msgs)
@@ -37,7 +37,7 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(TARGETS example_traj example_vel_traj
+install(TARGETS example_pos_traj example_vel_traj
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

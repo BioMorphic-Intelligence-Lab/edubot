@@ -1,4 +1,4 @@
-#include "example_traj.hpp"
+#include "example_pos_traj.hpp"
 
 constexpr double DEG2RAD = M_PI / 180.0;
 
