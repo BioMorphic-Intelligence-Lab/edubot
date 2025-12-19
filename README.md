@@ -2,7 +2,7 @@
 
 This repository contains the drivers, visualization features and a simple simulation for [LeRobot](https://github.com/huggingface/lerobot) (and for legacy reasons also the [Lynxmotion AL5A Arm](https://wiki.lynxmotion.com/info/wiki/lynxmotion/view/servo-erector-set-robots-kits/ses-v1-robots/ses-v1-arms/al5a/)), all of which are implemented using the [ROS2](https://docs.ros.org/en/humble/index.html) middleware.
 
-## Installation 
+## Installation
 
 ### Pre-requisites
 
@@ -57,8 +57,8 @@ Make sure the additional ros libraries are installed
         sudo apt install ros-jazzy-xacro ros-jazzy-joint-state-publisher ros-jazzy-joint-state-publisher-gui
         # Install pip if not yet installed
         sudo apt-get install python3-pip
-        # Install python pkg dependency
-        pip install catkin_pkg
+        # Install python pkg dependency (global)
+        sudo apt-get install python-catkin_pkg
 
 #### For both 22.04 and 24.04
 
@@ -70,7 +70,7 @@ Finally, clone this repository recursively
 
         git clone --recurse-submodules https://github.com/bioMorphic-Intelligence-Lab/edubot
 
-To allow the `ROS` programm to access the USB port connected to the eduBot you will also have to add the current user to the dialout group
+To allow the `ROS` program to access the USB port connected to the eduBot you will also have to add the current user to the dialout group
 
         sudo usermod -a -G dialout $USER
 
@@ -103,10 +103,13 @@ You can run start the simulation or the driver for the robot with the following 
 
  Command                            |  Effect 
 ------------------------------------|---------------------------------------------------
-`ros2 launch lerobot sim.launch.py`  |  Launches the simulation and `rviz` visualization
+`ros2 launch lerobot sim_position.launch.py`  |  Launches the simulation and `rviz` visualization with the robot in position control mode
+`ros2 launch lerobot sim_velocity.launch.py`  |  Launches the simulation and `rviz` visualization with the robot in velocity control mode
 `ros2 launch lerobot rviz.launch.py` |  Launches the `rviz` visualization and a joint position interface which lets you play with the robot
-`ros2 run lerobot lerobot_hw`         |  Starts the Hardware driver for the robot
-`ros2 run controllers example_traj` |  Starts the an controller that commands a periodic example trajectory
+`ros2 launch lerobot hw_position.launch.py`  |  Launches the hardware interface with the robot in position control mode
+`ros2 launch lerobot hw_velocity.launch.py`  |  Launches the hardware interface with the robot in velocity control mode
+`ros2 run controllers example_traj` |  Starts the cpp controller that commands a periodic example trajectory
+`ros2 run python_controllers example_traj`  | Starts the python controller that commands a periodic example trajectory
 
 ### For Virtual Machine Users
 
