@@ -16,9 +16,14 @@ ExampleTraj::ExampleTraj() :
 
     this->_beginning = this->now();
     
-    this->_publisher = this->create_publisher<trajectory_msgs::msg::JointTrajectory>("joint_cmds", 10);
+    // Make QoS for publisher
+    rclcpp::QoS qos(rclcpp::KeepLast(1));
+    qos.reliable();
+    qos.durability_volatile();
+
+    this->_publisher = this->create_publisher<trajectory_msgs::msg::JointTrajectory>("joint_cmds", qos);
     this->_timer = this->create_wall_timer(
-      10ms, std::bind(&ExampleTraj::_timer_callback, this));
+      100ms, std::bind(&ExampleTraj::_timer_callback, this));
 }
 
 void ExampleTraj::_timer_callback()
@@ -31,11 +36,15 @@ void ExampleTraj::_timer_callback()
   auto point = trajectory_msgs::msg::JointTrajectoryPoint();
   std::vector<double> positions;
   
+
+  std::vector<double> offsets = {0, 0.6, -0.4, -0.4, 0, 0};
   // Push joint position
   for(uint i = 0; i < this->home.size(); i++)
   {
-    positions.push_back(this->home.at(i)
-                        + 0.125 * M_PI * sin(2.0 * M_PI / 10.0 * dt));
+    double posi = this->home.at(i)
+            + 0.125 * M_PI * sin(2.0 * M_PI / 10.0 * dt)
+            + offsets.at(i);
+    positions.push_back(posi);
   }
   // Push gripper positions
   positions.push_back(0.5 * sin(2 * M_PI / 10.0 * dt) + 0.5);
