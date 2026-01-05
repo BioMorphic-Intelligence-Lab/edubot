@@ -30,12 +30,7 @@ protected:
     std::vector<double> get_qdot() override;
     std::vector<double> get_gripper() override;
 
-    bool set_mode(std::string mode);
-
-    void set_mode_callback(
-        const std::shared_ptr<robot_core::srv::SetMode::Request> request,
-        std::shared_ptr<robot_core::srv::SetMode::Response> response
-    ) override;
+    bool set_mode(Mode mode);
 
     void init_q() override;
     void init_names() override;

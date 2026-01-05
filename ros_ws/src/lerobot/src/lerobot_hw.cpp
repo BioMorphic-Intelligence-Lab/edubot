@@ -57,6 +57,9 @@ LeRobotHW::LeRobotHW(std::string ser,
     this->homing();
     this->set_des_gripper(GripperState::Closed);
 
+    /* Set the appropriate mode */
+    this->set_mode(this->mode);
+
 }
 
 void LeRobotHW::init_q()
@@ -170,10 +173,10 @@ void LeRobotHW::set_des_gripper_vel(double o)
     this->gripper_vel.at(0) = o;
 }
 
-bool LeRobotHW::set_mode(std::string mode)
+bool LeRobotHW::set_mode(Mode mode)
 {
     bool success = false;
-    if (mode.compare("position") == 0) {
+    if (mode == Mode::Position && this->mode != Mode::Position) {
         this->mode = Mode::Position;
         for(uint i = 0; i < this->n; i++) {
             this->_driver->setReferencePosition(this->IDs.at(i), this->q_des.at(i));
@@ -184,7 +187,7 @@ bool LeRobotHW::set_mode(std::string mode)
         }
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Position Mode!");
-    } else if (mode.compare("velocity") == 0) {    
+    } else if (mode == Mode::Velocity) {    
         // Ensure we have the correct amount of values in the cmds vector
         while(this->qdot.size() < this->n) this->qdot.push_back(0);
         while(this->qdot_des.size() < this->n) this->qdot_des.push_back(0);
@@ -198,25 +201,8 @@ bool LeRobotHW::set_mode(std::string mode)
 
         success = true;
         RCLCPP_INFO(this->get_logger(), "Switched to Velocity Mode!");
-    } else {
-        RCLCPP_INFO(this->get_logger(), "Unknown mode '%s'!", mode.c_str());
-    }
-
-    return success;
-}
-
-void LeRobotHW::set_mode_callback(
-    const std::shared_ptr<robot_core::srv::SetMode::Request> request,
-    std::shared_ptr<robot_core::srv::SetMode::Response> response
-)
-{
-    // Transform everything to lowercase
-    std::string str = request->mode;
-    for (char& c : str) {
-        c = std::tolower(c);
     } 
-
-    response->success = this->set_mode(str);
+    return success;
 }
 
 void LeRobotHW::homing()
