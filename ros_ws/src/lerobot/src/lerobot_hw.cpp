@@ -20,8 +20,12 @@ LeRobotHW::LeRobotHW(std::string ser,
     this->declare_parameter("gripper_open", M_PI_2);
     this->declare_parameter("gripper_closed", 0.0);
 
+    this->declare_parameter("max_speed", 0.0001);
+
     this->gripper_open = this->get_parameter("gripper_open").as_double();
     this->gripper_closed = this->get_parameter("gripper_closed").as_double();
+
+    this->max_speed = this->get_parameter("max_speed").as_double();
 
     std::vector<long int> ids_long = this->get_parameter("ids").as_integer_array();
     std::vector<long int> zero_positions = this->get_parameter("zero_positions").as_integer_array();
@@ -44,6 +48,7 @@ LeRobotHW::LeRobotHW(std::string ser,
     /* Set zero positions */
     for(uint8_t i = 0; i < this->n + 1; i++)
     {
+        this->_driver->setMaxSpeed(IDs.at(i), this->get_parameter("max_speed").as_double());
         this->_driver->setHomePosition(IDs.at(i), zero_positions.at(i));
     }
 

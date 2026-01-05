@@ -4,9 +4,9 @@
 class LeRobotHW : public Robot
 {
 public:
-    LeRobotHW(std::string ser="/dev/ttyUSB0",
-             int baud=115200,
-             double frequency=50.0,
+    LeRobotHW(std::string ser="/dev/ttyUSB1",
+             int baud=1000000,
+             double frequency=25.0,
              std::vector<uint8_t> ids={11, 12, 13, 14, 15, 16},
              bool homing=false,
              bool logging=false);
@@ -44,7 +44,7 @@ protected:
 
 private:
     const std::vector<double> HOME;
-    double gripper_open, gripper_closed;
+    double gripper_open, gripper_closed, max_speed;
     std::vector<uint8_t> IDs;  
     
     // Driver

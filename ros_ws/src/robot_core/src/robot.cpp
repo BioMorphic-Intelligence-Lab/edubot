@@ -27,16 +27,21 @@ Robot::Robot(uint n, double max_gripper):
     while(this->qdot.size() < this->n) this->qdot.push_back(0);
     while(this->gripper_vel.size() < 1) this->gripper_vel.push_back(0);
 
+    // Make QoS for subscriber
+    rclcpp::QoS qos(rclcpp::KeepLast(1));
+    qos.reliable();
+    qos.durability_volatile();
+
     this->joint_cmd_sub = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
         this->get_parameter("sub_topic").as_string(),
-        10,
+        qos,
         std::bind(&Robot::cmd_callback,
                 this,
                 std::placeholders::_1)
     ); 
 
     this->joint_state_pub = this->create_publisher<sensor_msgs::msg::JointState>(
-        this->get_parameter("pub_topic").as_string(), 10);
+        this->get_parameter("pub_topic").as_string(), rclcpp::SensorDataQoS());
 
     this->set_mode_server = this->create_service<robot_core::srv::SetMode>("set_mode",
       std::bind(&Robot::set_mode_callback, this, 
