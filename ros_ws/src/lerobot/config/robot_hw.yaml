@@ -1,0 +1,7 @@
+lerobot:
+  ros__parameters:
+    zero_positions: [1950, 1950, 1950, 2048, 2048, 2048]
+    ids: [11, 12, 13, 14, 15, 16]
+    gripper_open: 1.57079632679    # M_PI_2
+    gripper_closed: 0.0
+    max_speed: 0.2              # 1 rad/s max speed
