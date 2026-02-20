@@ -60,6 +60,11 @@ Make sure the additional ros libraries are installed
         # Install python pkg dependency (global)
         sudo apt-get install python-catkin_pkg
 
+If your installation complains about GPG keys, run:
+```
+sudo rm /etc/apt/sources.list.d/ros2.sources
+```
+
 #### For both 22.04 and 24.04
 
 The required `boost` libraries are installed via
