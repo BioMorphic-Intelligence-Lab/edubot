@@ -99,17 +99,30 @@ Once the package is compiled, source by calling:
       # Source the local setup
       source install/setup.bash
 
-You can run start the simulation or the driver for the robot with the following commands
+You can run start the simulation or the driver for the robot with the following commands.
 
- Command                            |  Effect 
-------------------------------------|---------------------------------------------------
-`ros2 launch lerobot sim_position.launch.py`  |  Launches the simulation and `rviz` visualization with the robot in position control mode
-`ros2 launch lerobot sim_velocity.launch.py`  |  Launches the simulation and `rviz` visualization with the robot in velocity control mode
-`ros2 launch lerobot rviz.launch.py` |  Launches the `rviz` visualization and a joint position interface which lets you play with the robot
-`ros2 launch lerobot hw_position.launch.py`  |  Launches the hardware interface with the robot in position control mode
-`ros2 launch lerobot hw_velocity.launch.py`  |  Launches the hardware interface with the robot in velocity control mode
-`ros2 run controllers example_traj` |  Starts the cpp controller that commands a periodic example trajectory
-`ros2 run python_controllers example_traj`  | Starts the python controller that commands a periodic example trajectory
+**Launch files (lerobot package)**
+
+| Command | Effect |
+|---------|--------|
+| `ros2 launch lerobot sim_position.launch.py` | Simulation and RViz in position control mode |
+| `ros2 launch lerobot sim_velocity.launch.py` | Simulation and RViz in velocity control mode |
+| `ros2 launch lerobot rviz.launch.py` | RViz only. **Launch something else** (sim, hw, or joint_slider) in another terminal to see the robot at a real pose. |
+| `ros2 launch lerobot joint_slider.launch.py` | Joint position slider GUI (no RViz) |
+| `ros2 launch lerobot hw_position.launch.py` | Hardware interface in position control mode |
+| `ros2 launch lerobot hw_velocity.launch.py` | Hardware interface in velocity control mode |
+| `ros2 launch lerobot hw_read.launch.py` | Passive read-only: publish joint states, torque disabled (move robot by hand) |
+
+When you launch **RViz only** (`rviz.launch.py`), the robot is shown in the default pose (all joints 0) until another node publishes joint states. To see the robot at a real position, launch one of the following in a **second terminal**: simulation (`sim_position` or `sim_velocity`), hardware (`hw_position`, `hw_velocity`, or `hw_read`), or the joint slider (`joint_slider.launch.py`).
+
+**Running controllers directly (without launch file)**
+
+| Command | Effect |
+|---------|--------|
+| `ros2 run controllers example_pos_traj` | C++ example position mode trajectory controller |
+| `ros2 run controllers example_vel_traj` | C++ example velocity mode trajectory controller |
+| `ros2 run python_controllers example_pos_traj` | Python example trajectory controller |
+| `ros2 run python_controllers example_vel_traj` | Python velocity trajectory controller |
 
 ### For Virtual Machine Users
 
