@@ -1,3 +1,4 @@
 example_traj_lerobot:
   ros__parameters:
-    home: [0.0, 1.0472, -0.8727, 0.8727, 0.0]
+    # Home in rad: 0, 105°, -70°, -60°, 0 (matches URDF/sim)
+    home: [0.0, 1.8326, -1.2217, -1.0472, 0.0]

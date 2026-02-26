@@ -10,9 +10,10 @@ class ExampleTraj(Node):
     def __init__(self):
         super().__init__('example_trajectory')
 
-        self._HOME = [np.deg2rad(0), np.deg2rad(-105),
-                     np.deg2rad(70), np.deg2rad(60),
-                     np.deg2rad(0)]
+        # Home matches URDF/sim: 0, 105°, -70°, -60°, 0 deg
+        self._HOME = [np.deg2rad(0), np.deg2rad(105),
+                      np.deg2rad(-70), np.deg2rad(-60),
+                      np.deg2rad(0)]
         self._beginning = self.get_clock().now()
         self._publisher = self.create_publisher(JointTrajectory, 'joint_cmds', 10)
         timer_period = 0.04  # seconds
@@ -27,9 +28,9 @@ class ExampleTraj(Node):
         
         point = JointTrajectoryPoint()
         point.positions = [self._HOME[0] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
-                           self._HOME[1] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
-                           self._HOME[2] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
-                           self._HOME[3] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
+                           self._HOME[1] - 0.25  * np.pi + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
+                           self._HOME[2] + 0.125 * np.pi + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
+                           self._HOME[3] + 0.25  * np.pi + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
                            self._HOME[4] + 0.125 * np.pi * np.sin(2 * np.pi / 10.0 * dt),
                            0.5 * np.sin(2 * np.pi / 10.0 * dt) + 0.5]
         msg.points = [point]
