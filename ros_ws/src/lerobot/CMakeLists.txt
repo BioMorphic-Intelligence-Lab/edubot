@@ -13,6 +13,7 @@ find_package(feetech_cpp_lib REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 find_package(visualization_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -32,6 +33,14 @@ target_include_directories(lerobot_hw PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lerobot>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(lerobot_hw PUBLIC c_std_99 cxx_std_17)
+
+add_executable(lerobot_read src/lerobot_read.cpp)
+ament_target_dependencies(lerobot_read
+    rclcpp sensor_msgs feetech_cpp_lib)
+target_include_directories(lerobot_read PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lerobot>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(lerobot_read PUBLIC c_std_99 cxx_std_17)
 
 add_executable(path_publisher src/path_publisher.cpp)
 ament_target_dependencies(path_publisher
@@ -55,7 +64,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(TARGETS lerobot_sim lerobot_hw path_publisher
+install(TARGETS lerobot_sim lerobot_hw lerobot_read path_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY 

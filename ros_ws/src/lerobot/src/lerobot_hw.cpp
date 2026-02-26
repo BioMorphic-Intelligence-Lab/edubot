@@ -7,8 +7,8 @@ LeRobotHW::LeRobotHW(std::string ser,
                      bool homing,
                      bool logging): 
     Robot(5, M_PI_2),
-    HOME({DEG2RAD * 0, -DEG2RAD * 105, DEG2RAD * 70,
-          DEG2RAD * 60, DEG2RAD * 0}),
+    HOME({DEG2RAD * 0, DEG2RAD * 105, -DEG2RAD * 70,
+          -DEG2RAD * 60, DEG2RAD * 0}),
     IDs(ids)
 {
     this->declare_parameter("zero_positions",
@@ -21,6 +21,8 @@ LeRobotHW::LeRobotHW(std::string ser,
     this->declare_parameter("gripper_closed", 0.0);
 
     this->declare_parameter("max_speed", 0.0001);
+    this->declare_parameter("joint_signs",
+        std::vector<double>({1.0, -1.0, -1.0, -1.0, 1.0, 1.0}));
 
     this->gripper_open = this->get_parameter("gripper_open").as_double();
     this->gripper_closed = this->get_parameter("gripper_closed").as_double();
@@ -35,6 +37,10 @@ LeRobotHW::LeRobotHW(std::string ser,
         this->IDs.at(i) = static_cast<uint8_t>(ids_long.at(i));
     }
 
+    std::vector<double> signs = this->get_parameter("joint_signs").as_double_array();
+    this->joint_signs.resize(this->n + 1, 1.0);
+    for (size_t i = 0; i < signs.size() && i < this->joint_signs.size(); i++)
+        this->joint_signs[i] = signs[i];
 
     /* Init initial state and names */
     this->init_q();
@@ -77,13 +83,15 @@ void LeRobotHW::init_names()
 }
 void LeRobotHW::set_des_q_single_rad(uint servo, double q)
 {
-    this->_driver->setReferencePosition(this->IDs.at(servo), q);
+    double q_driver = q * (servo < this->joint_signs.size() ? this->joint_signs[servo] : 1.0);
+    this->_driver->setReferencePosition(this->IDs.at(servo), q_driver);
     this->q_des.at(servo) = q;
 }
 
 void LeRobotHW::set_des_qdot_single_rad(uint servo, double qdot)
 {
-    this->_driver->setReferenceVelocity(this->IDs.at(servo), qdot);
+    double qdot_driver = qdot * (servo < this->joint_signs.size() ? this->joint_signs[servo] : 1.0);
+    this->_driver->setReferenceVelocity(this->IDs.at(servo), qdot_driver);
     this->qdot_des.at(servo) = qdot;
 }
 void LeRobotHW::set_des_q_single_deg(uint servo, double q)
@@ -216,16 +224,18 @@ void LeRobotHW::homing()
 std::vector<double> LeRobotHW::get_q()
 {
     std::vector<double> q = this->_driver->getCurrentPositions();
-
-    return q;    
+    for (size_t i = 0; i < q.size() && i < this->joint_signs.size(); i++)
+        q[i] *= this->joint_signs[i];
+    return q;
 }
 
 
 std::vector<double> LeRobotHW::get_qdot()
 {
     std::vector<double> qdot = this->_driver->getCurrentVelocities();
-
-    return qdot;    
+    for (size_t i = 0; i < qdot.size() && i < this->joint_signs.size(); i++)
+        qdot[i] *= this->joint_signs[i];
+    return qdot;
 }
 
 std::vector<double> LeRobotHW::get_gripper()

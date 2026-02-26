@@ -135,18 +135,26 @@ void Robot::timer_callback()
   js.name = this->names;
   js.header.stamp = this->now();
 
-  // Get Joint states
+  // Get Joint states (get_q/get_qdot may return n or n+1 depending on subclass)
   std::vector<double> q_pub = this->get_q();
   std::vector<double> qdot_pub = this->get_qdot();
 
-  // Get gripper state scaled by its max opening value
-  std::vector<double> gripper = this->get_gripper();
-  std::vector<double> gripper_vel = this->get_gripper_vel();
-
-  // We may have to append it twice since left gripper and right 
-  // Gripper are treated independently by rviz
-  for(double val : this->gripper)
-    q_pub.push_back(this->_MAX_GRIPPER * val);
+  // Ensure we have exactly names.size() entries (6: 5 arm + 1 Gripper).
+  // If subclass already included gripper (e.g. HW returns 6 from driver), use as is.
+  // Otherwise append one gripper position/velocity.
+  const size_t expected = this->names.size();
+  if (q_pub.size() == this->n && expected == this->n + 1u) {
+    std::vector<double> gripper = this->get_gripper();
+    std::vector<double> gripper_vel = this->get_gripper_vel();
+    double gripper_pos = this->gripper.empty() ? 0.0 : (this->_MAX_GRIPPER * this->gripper[0]);
+    double gripper_vel_val = gripper_vel.empty() ? 0.0 : gripper_vel[0];
+    q_pub.push_back(gripper_pos);
+    qdot_pub.push_back(gripper_vel_val);
+  }
+  if (q_pub.size() != expected)
+    q_pub.resize(expected, 0.0);
+  if (qdot_pub.size() != expected)
+    qdot_pub.resize(expected, 0.0);
 
   // Publish current joint state
   js.position = q_pub;

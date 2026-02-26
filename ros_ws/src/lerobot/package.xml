@@ -13,6 +13,7 @@
   <depend>robot_sim</depend>
   <depend>feetech_cpp_lib</depend>
   <depend>visualization_msgs</depend>
+  <depend>sensor_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
