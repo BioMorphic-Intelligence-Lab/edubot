@@ -158,6 +158,16 @@ Log in and log out user account and then try again. Don't forget to source.
 
 Example implementation can be found [here](https://www.youtube.com/watch?v=h-EOHbVqsJg).
 
+## Troubleshooting
+### BRLTTY
+There is a package that sometimes is installed automatically with Ubuntu called `brltty`, which interferes with servo driver. You can remove it by calling 
+```
+sudo apt purge brltty
+```
+
+### Wrong baud rate or USB port
+In the config (`lerobot\config\robot_hw.yaml`), the USB port name is defined along with the baud rate. You can check which USB port is assigned by calling `ls /dev/ttyUSB*`. This should correspond to the serial port name defined in the yaml file. Rebuild to make config changes take effect.
+
 ## Issues
 
 If any bugs or issues with this software occur, please don't hesitate to use the [Issues](https://github.com/BioMorphic-Intelligence-Lab/edubot/issues) pane within this repository. Please write a short description of the issue and some steps to reproduce it.
