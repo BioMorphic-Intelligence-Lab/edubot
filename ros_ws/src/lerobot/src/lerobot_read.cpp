@@ -47,7 +47,7 @@ LeRobotRead::LeRobotRead()
         this->get_parameter("serial_port").as_string(), 
         this->get_parameter("baud_rate").as_int(), 
         this->get_parameter("frequency").as_double(), 
-        IDs, false, false);
+        IDs, false, false, true);
 
 
     for (size_t i = 0; i < IDs.size() && i < zero_positions.size(); i++)
@@ -68,6 +68,8 @@ LeRobotRead::LeRobotRead()
 
 void LeRobotRead::timer_callback()
 {
+    driver_->readAllServoData();
+
     sensor_msgs::msg::JointState js;
     js.header.stamp = now();
     js.header.frame_id = "";
