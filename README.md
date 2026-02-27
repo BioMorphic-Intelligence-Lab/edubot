@@ -106,6 +106,13 @@ Once the package is compiled, source by calling:
 
 You can run start the simulation or the driver for the robot with the following commands.
 
+### Updating
+The packages are continually being updated, so be sure to update every once in a while by calling 
+```
+git submodule update --recursive
+git pull
+```
+
 **Launch files (lerobot package)**
 
 | Command | Effect |
