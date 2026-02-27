@@ -27,7 +27,7 @@ LeRobotRead::LeRobotRead()
     std::vector<long int> zero_positions = this->get_parameter("zero_positions").as_integer_array();
     
     this->IDs.resize(ids_long.size());
-    std::vector<DriverMode> operating_modes;
+    std::vector<DriverMode> operating_modes(ids_long.size(), DriverMode::UNPOWERED);
     for(uint8_t i = 0; i < ids_long.size(); i++)
     {
         this->IDs.at(i) = static_cast<uint8_t>(ids_long.at(i));
@@ -42,23 +42,18 @@ LeRobotRead::LeRobotRead()
     joint_state_pub_ = create_publisher<sensor_msgs::msg::JointState>(
         "joint_states", rclcpp::SensorDataQoS());
 
-    RCLCPP_INFO(get_logger(), "Creating driver in read-only mode (no torque, no commands)...");
+    RCLCPP_INFO(get_logger(), "Creating driver with UNPOWERED mode (no torque, joint state read by driver loop)...");
     driver_ = std::make_shared<FeetechServo>(
         this->get_parameter("serial_port").as_string(), 
         this->get_parameter("baud_rate").as_int(), 
         this->get_parameter("frequency").as_double(), 
-        IDs, false, false, true);
-
+        IDs, false, false, false);
 
     for (size_t i = 0; i < IDs.size() && i < zero_positions.size(); i++)
     {
         driver_->setHomePosition(IDs[i], static_cast<int16_t>(zero_positions[i]));
     }
-    for (size_t i = 0; i < IDs.size() && i < zero_positions.size(); i++)
-    {
-        driver_->writeTorqueEnable(IDs[i], false);
-        driver_->setOperatingModes(operating_modes);
-    }
+    driver_->setOperatingModes(operating_modes);
     double publish_rate = get_parameter("frequency").as_double();
     timer_ = create_wall_timer(
         std::chrono::duration<double>(1.0 / publish_rate),
@@ -68,8 +63,6 @@ LeRobotRead::LeRobotRead()
 
 void LeRobotRead::timer_callback()
 {
-    driver_->readAllServoData();
-
     sensor_msgs::msg::JointState js;
     js.header.stamp = now();
     js.header.frame_id = "";
