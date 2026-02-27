@@ -27,6 +27,7 @@ LeRobotRead::LeRobotRead()
     std::vector<long int> zero_positions = this->get_parameter("zero_positions").as_integer_array();
     
     this->IDs.resize(ids_long.size());
+    std::vector<DriverMode> operating_modes;
     for(uint8_t i = 0; i < ids_long.size(); i++)
     {
         this->IDs.at(i) = static_cast<uint8_t>(ids_long.at(i));
@@ -51,10 +52,13 @@ LeRobotRead::LeRobotRead()
 
     for (size_t i = 0; i < IDs.size() && i < zero_positions.size(); i++)
     {
-        driver_->writeTorqueEnable(IDs[i], false);
         driver_->setHomePosition(IDs[i], static_cast<int16_t>(zero_positions[i]));
     }
-
+    for (size_t i = 0; i < IDs.size() && i < zero_positions.size(); i++)
+    {
+        driver_->writeTorqueEnable(IDs[i], false);
+        driver_->setOperatingModes(operating_modes);
+    }
     double publish_rate = get_parameter("frequency").as_double();
     timer_ = create_wall_timer(
         std::chrono::duration<double>(1.0 / publish_rate),
@@ -64,8 +68,6 @@ LeRobotRead::LeRobotRead()
 
 void LeRobotRead::timer_callback()
 {
-    driver_->readAllServoData();
-
     sensor_msgs::msg::JointState js;
     js.header.stamp = now();
     js.header.frame_id = "";

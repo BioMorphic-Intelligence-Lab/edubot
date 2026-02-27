@@ -1,3 +1,4 @@
 [submodule "ros_ws/src/feetech_cpp_lib"]
 	path = ros_ws/src/feetech_cpp_lib
 	url = https://github.com/BioMorphic-Intelligence-Lab/feetech_cpp_lib
+	branch = leRobot_mods
