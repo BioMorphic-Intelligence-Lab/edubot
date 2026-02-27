@@ -1,42 +1,38 @@
 #include "lerobot_hw.hpp"
 
-LeRobotHW::LeRobotHW(std::string ser,
-                     int baud,
-                     double frequency,
-                     std::vector<uint8_t> ids,
-                     bool homing,
-                     bool logging): 
+LeRobotHW::LeRobotHW(): 
     Robot(5, M_PI_2),
     HOME({DEG2RAD * 0, DEG2RAD * 105, -DEG2RAD * 70,
-          -DEG2RAD * 60, DEG2RAD * 0}),
-    IDs(ids)
+          -DEG2RAD * 60, DEG2RAD * 0})
 {
+    /* Parameter declaration */
+    this->declare_parameter("serial_port", "/dev/ttyUSB0");
+    this->declare_parameter("baud_rate", 1000000);
+    this->declare_parameter("frequency", 10.0);
+    this->declare_parameter("gripper_open", M_PI_2);
+    this->declare_parameter("gripper_closed", 0.0);
+    this->declare_parameter("max_speed", 0.0001);
     this->declare_parameter("zero_positions",
         std::vector<int>({1950, 1950, 1950, 2048, 2048, 2048})
     );
     this->declare_parameter("ids",
         std::vector<int>({11, 12, 13, 14, 15, 16})
     );
-    this->declare_parameter("gripper_open", M_PI_2);
-    this->declare_parameter("gripper_closed", 0.0);
-
-    this->declare_parameter("max_speed", 0.0001);
-    this->declare_parameter("joint_signs",
+    this->declare_parameter("joint_signs", 
         std::vector<double>({1.0, -1.0, -1.0, -1.0, 1.0, 1.0}));
-
+    
+    /* Assign the parameters on node object */
     this->gripper_open = this->get_parameter("gripper_open").as_double();
     this->gripper_closed = this->get_parameter("gripper_closed").as_double();
-
     this->max_speed = this->get_parameter("max_speed").as_double();
-
     std::vector<long int> ids_long = this->get_parameter("ids").as_integer_array();
     std::vector<long int> zero_positions = this->get_parameter("zero_positions").as_integer_array();
-
+    
+    this->IDs.resize(ids_long.size());
     for(uint8_t i = 0; i < ids_long.size(); i++)
     {
         this->IDs.at(i) = static_cast<uint8_t>(ids_long.at(i));
     }
-
     std::vector<double> signs = this->get_parameter("joint_signs").as_double_array();
     this->joint_signs.resize(this->n + 1, 1.0);
     for (size_t i = 0; i < signs.size() && i < this->joint_signs.size(); i++)
@@ -48,7 +44,10 @@ LeRobotHW::LeRobotHW(std::string ser,
 
     /* Init HW driver */
     this->_driver = std::make_shared<FeetechServo>(
-        ser, baud, frequency, ids, homing, logging
+        this->get_parameter("serial_port").as_string(),
+        this->get_parameter("baud_rate").as_int(),
+        this->get_parameter("frequency").as_double(),
+        IDs, false, false
     );
  
     /* Set zero positions */
@@ -57,7 +56,6 @@ LeRobotHW::LeRobotHW(std::string ser,
         this->_driver->setMaxSpeed(IDs.at(i), this->get_parameter("max_speed").as_double());
         this->_driver->setHomePosition(IDs.at(i), zero_positions.at(i));
     }
-
 
     /* Bring to initial state */
     this->homing();

@@ -4,12 +4,7 @@
 class LeRobotHW : public Robot
 {
 public:
-    LeRobotHW(std::string ser="/dev/ttyUSB0",
-             int baud=1000000,
-             double frequency=25.0,
-             std::vector<uint8_t> ids={11, 12, 13, 14, 15, 16},
-             bool homing=false,
-             bool logging=false);
+    LeRobotHW();
 
 protected:
     void set_des_q_single_rad(uint servo, double q) override;

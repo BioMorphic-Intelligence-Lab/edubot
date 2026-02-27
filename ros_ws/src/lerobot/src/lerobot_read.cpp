@@ -7,34 +7,34 @@ static const std::vector<std::string> DEFAULT_JOINT_NAMES = {
     "Wrist_Pitch", "Wrist_Roll", "Gripper"
 };
 
-LeRobotRead::LeRobotRead(std::string ser, long baud, double frequency,
-                         std::vector<uint8_t> ids, bool logging)
-    : Node("lerobot_read"),
-      ids_(std::move(ids))
+LeRobotRead::LeRobotRead()
+    : Node("lerobot_read")
 {
-    declare_parameter("serial_port", ser);
-    declare_parameter("baud_rate", static_cast<int>(baud));
-    declare_parameter("frequency", frequency);
-    declare_parameter("ids", std::vector<int>(ids_.begin(), ids_.end()));
-    declare_parameter("zero_positions", std::vector<int>({1950, 1950, 1950, 2048, 2048, 2048}));
-    declare_parameter("joint_signs", std::vector<double>({1.0, -1.0, -1.0, -1.0, 1.0, 1.0}));
-    declare_parameter("publish_rate", 50.0);
-    declare_parameter("logging", logging);
+    /* Parameter declaration */
+    this->declare_parameter("serial_port", "/dev/ttyUSB0");
+    this->declare_parameter("baud_rate", 1000000);
+    this->declare_parameter("frequency", 10.0);
+    this->declare_parameter("zero_positions",
+        std::vector<int>({1950, 1950, 1950, 2048, 2048, 2048})
+    );
+    this->declare_parameter("ids",
+        std::vector<int>({11, 12, 13, 14, 15, 16})
+    );
+    this->declare_parameter("joint_signs", 
+        std::vector<double>({1.0, -1.0, -1.0, -1.0, 1.0, 1.0}));
 
-    ser = get_parameter("serial_port").as_string();
-    baud = static_cast<long>(get_parameter("baud_rate").as_int());
-    frequency = get_parameter("frequency").as_double();
-    logging = get_parameter("logging").as_bool();
-
-    std::vector<long int> ids_long = get_parameter("ids").as_integer_array();
-    ids_.clear();
-    for (auto id : ids_long)
-        ids_.push_back(static_cast<uint8_t>(id));
-
-    std::vector<double> signs = get_parameter("joint_signs").as_double_array();
-    joint_signs_.resize(ids_.size(), 1.0);
-    for (size_t i = 0; i < signs.size() && i < joint_signs_.size(); i++)
-        joint_signs_[i] = signs[i];
+    std::vector<long int> ids_long = this->get_parameter("ids").as_integer_array();
+    std::vector<long int> zero_positions = this->get_parameter("zero_positions").as_integer_array();
+    
+    this->IDs.resize(ids_long.size());
+    for(uint8_t i = 0; i < ids_long.size(); i++)
+    {
+        this->IDs.at(i) = static_cast<uint8_t>(ids_long.at(i));
+    }
+    std::vector<double> signs = this->get_parameter("joint_signs").as_double_array();
+    this->joint_signs.resize(signs.size());
+    for (size_t i = 0; i < signs.size() && i < this->joint_signs.size(); i++)
+        this->joint_signs[i] = signs[i];
 
     joint_names_ = DEFAULT_JOINT_NAMES;
 
@@ -43,13 +43,19 @@ LeRobotRead::LeRobotRead(std::string ser, long baud, double frequency,
 
     RCLCPP_INFO(get_logger(), "Creating driver in read-only mode (no torque, no commands)...");
     driver_ = std::make_shared<FeetechServo>(
-        ser, baud, frequency, ids_, false, logging);
+        this->get_parameter("serial_port").as_string(), 
+        this->get_parameter("baud_rate").as_int(), 
+        this->get_parameter("frequency").as_double(), 
+        IDs, false, false);
 
-    std::vector<long int> zero_positions = get_parameter("zero_positions").as_integer_array();
-    for (size_t i = 0; i < ids_.size() && i < zero_positions.size(); i++)
-        driver_->setHomePosition(ids_[i], static_cast<int16_t>(zero_positions[i]));
 
-    double publish_rate = get_parameter("publish_rate").as_double();
+    for (size_t i = 0; i < IDs.size() && i < zero_positions.size(); i++)
+    {
+        driver_->writeTorqueEnable(IDs[i], false);
+        driver_->setHomePosition(IDs[i], static_cast<int16_t>(zero_positions[i]));
+    }
+
+    double publish_rate = get_parameter("frequency").as_double();
     timer_ = create_wall_timer(
         std::chrono::duration<double>(1.0 / publish_rate),
         std::bind(&LeRobotRead::timer_callback, this));
@@ -68,10 +74,10 @@ void LeRobotRead::timer_callback()
     std::vector<double> pos = driver_->getCurrentPositions();
     std::vector<double> vel = driver_->getCurrentVelocities();
 
-    for (size_t i = 0; i < pos.size() && i < joint_signs_.size(); i++)
-        pos[i] *= joint_signs_[i];
-    for (size_t i = 0; i < vel.size() && i < joint_signs_.size(); i++)
-        vel[i] *= joint_signs_[i];
+    for (size_t i = 0; i < pos.size() && i < joint_signs.size(); i++)
+        pos[i] *= joint_signs[i];
+    for (size_t i = 0; i < vel.size() && i < joint_signs.size(); i++)
+        vel[i] *= joint_signs[i];
 
     if (pos.size() > js.name.size())
         pos.resize(js.name.size());

@@ -1,9 +1,11 @@
 lerobot:
   ros__parameters:
-    zero_positions: [1950, 1950, 1950, 2048, 2048, 2048]
-    ids: [11, 12, 13, 14, 15, 16]
+    serial_port: "/dev/ttyUSB0"
+    baud_rate: 1000000
+    frequency: 10.0
     gripper_open: 1.57079632679    # M_PI_2
     gripper_closed: 0.0
-    max_speed: 0.2              # 1 rad/s max speed
-    # Per-joint sign so HW matches URDF/sim (1 or -1). Order: Shoulder_Rotation, Shoulder_Pitch, Elbow, Wrist_Pitch, Wrist_Roll, Gripper
-    joint_signs: [1.0, -1.0, -1.0, -1.0, 1.0, 1.0]
+    max_speed: 0.2 # 1 rad/s max speed
+    zero_positions: [1950, 1950, 1950, 2048, 2048, 2048]
+    ids: [11, 12, 13, 14, 15, 16]
+    joint_signs: [1.0, -1.0, -1.0, -1.0, 1.0, 1.0] # Per-joint sign so HW matches URDF/sim (1 or -1). Order: Shoulder_Rotation, Shoulder_Pitch, Elbow, Wrist_Pitch, Wrist_Roll, Gripper
