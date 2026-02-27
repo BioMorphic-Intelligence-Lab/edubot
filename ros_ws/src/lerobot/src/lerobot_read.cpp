@@ -43,7 +43,7 @@ LeRobotRead::LeRobotRead(std::string ser, long baud, double frequency,
 
     RCLCPP_INFO(get_logger(), "Creating driver in read-only mode (no torque, no commands)...");
     driver_ = std::make_shared<FeetechServo>(
-        ser, baud, frequency, ids_, false, logging, true);
+        ser, baud, frequency, ids_, false, logging);
 
     std::vector<long int> zero_positions = get_parameter("zero_positions").as_integer_array();
     for (size_t i = 0; i < ids_.size() && i < zero_positions.size(); i++)
