@@ -2,8 +2,7 @@
 
 LeRobotSim::LeRobotSim(): 
     RobotSim(5, M_PI_2),
-    HOME({DEG2RAD * 0, DEG2RAD * 105, -DEG2RAD * 70,
-          -DEG2RAD * 60, DEG2RAD * 0})
+    HOME(load_home_position(*this))
 {
     /* Init initial state and names */
     this->init_q();
@@ -12,6 +11,17 @@ LeRobotSim::LeRobotSim():
     /* Bring to initial state */
     this->homing();
     this->set_des_gripper(GripperState::Closed);
+}
+
+std::vector<double> LeRobotSim::load_home_position(rclcpp::Node& node)
+{
+    node.declare_parameter(
+        "home_position", std::vector<double>(
+            {DEG2RAD * 0, DEG2RAD * 105,
+            -DEG2RAD * 70, -DEG2RAD * 60, DEG2RAD * 0}
+        )
+    );
+    return node.get_parameter("home_position").as_double_array();
 }
 
 void LeRobotSim::init_q()

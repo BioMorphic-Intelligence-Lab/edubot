@@ -2,8 +2,7 @@
 
 LeRobotHW::LeRobotHW(): 
     Robot(5, M_PI_2),
-    HOME({DEG2RAD * 0, DEG2RAD * 105, -DEG2RAD * 70,
-          -DEG2RAD * 60, DEG2RAD * 0})
+    HOME(load_home_position(*this))
 {
     /* Parameter declaration */
     this->declare_parameter("serial_port", "/dev/ttyUSB0");
@@ -61,9 +60,47 @@ LeRobotHW::LeRobotHW():
     this->homing();
     this->set_des_gripper(GripperState::Closed);
 
+    // Wait until the robot reaches the home position (homeing complete)
+    // We'll poll the current joint positions and compare to home position with a tolerance
+    {
+        const double tolerance = 0.05;  // radians (~3 deg)
+        bool at_home = false;
+        rclcpp::Rate rate(20);  // 20 Hz polling
+
+        for (int attempt = 0; attempt < 200 && !at_home && rclcpp::ok(); ++attempt) { // max 10s    
+            
+            std::vector<double> current_q = this->_driver->getCurrentPositions();    
+            at_home = true;
+            for (size_t j = 0; j < this->HOME.size(); ++j) {
+                if (std::abs(current_q[j] - this->HOME[j]) > tolerance) {
+                    at_home = false;
+                    break;
+                }
+            }
+
+            if (at_home) {
+                RCLCPP_INFO(this->get_logger(), "Robot reached home position");
+                break;
+            }
+            rate.sleep();
+        }
+    }
+
     /* Set the appropriate mode */
     this->set_mode(this->mode);
 
+}
+
+std::vector<double> LeRobotHW::load_home_position(rclcpp::Node& node)
+{
+    node.declare_parameter(
+        "home_position", std::vector<double>(
+            {DEG2RAD * 0, DEG2RAD * 105,
+            -DEG2RAD * 70, -DEG2RAD * 60, DEG2RAD * 0}
+        )
+    );
+
+    return node.get_parameter("home_position").as_double_array();
 }
 
 void LeRobotHW::init_q()

@@ -19,7 +19,7 @@ def generate_launch_description():
     start_sim = Node(package = pkg_name,
                      name = "lerobot_sim",
                      executable = "lerobot_sim",
-                     parameters=[{'mode': 'position'}])
+                     parameters=[pkg_share + '/config/lerobot_pos_sim.yaml'])
     
     #start_path_pub = Node(package = pkg_name,
     #                      name = "path_publisher",

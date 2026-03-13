@@ -13,5 +13,9 @@ protected:
     void homing() override;
 
 private:
-    const std::vector<double> HOME;
+    
+    // Helper function to load the home position from the parameter server
+    static std::vector<double> load_home_position(rclcpp::Node& node);
+
+    std::vector<double> HOME;
 };

@@ -9,3 +9,4 @@ lerobot:
     zero_positions: [1950, 1950, 1950, 2048, 2048, 2048]
     ids: [11, 12, 13, 14, 15, 16]
     joint_signs: [1.0, -1.0, -1.0, -1.0, 1.0, 1.0] # Per-joint sign so HW matches URDF/sim (1 or -1). Order: Shoulder_Rotation, Shoulder_Pitch, Elbow, Wrist_Pitch, Wrist_Roll, Gripper
+    home_position: [0.0, 1.8326, -1.2217, -1.0472, 0.0]
