@@ -174,6 +174,26 @@ If any bugs or issues with this software occur, please don't hesitate to use the
 
 Good Luck!
 
+# Tips & Tricks
+
+## Customizing the home position
+
+The robot has a configurable **HOME** position, which it will go to after start up. Each servo also has a configurable **zero position** that the driver uses as the zero reference in radians. These can be configured via the config files.
+
+- **Via ROS 2 launch/config files (used in `lerobot`)**  
+  When this library is used from the `lerobot` package, the home position and raw tick offsets are configured through ROS 2 parameter YAML files that are loaded by the launch files:
+
+  - In `robot_hw.yaml`  
+    - `zero_positions`: array of raw tick values passed to `FeetechServo::setHomePosition` for each servo ID, e.g.  
+      `zero_positions: [1950, 1950, 1950, 2048, 2048, 2048]`  
+    - `home_position`: joint angles in radians that define the logical home pose of the robot, e.g.  
+      `home_position: [0.0, 1.8326, -1.2217, -1.0472, 0.0]`
+
+  - In `robot_read.yaml`  
+    - `zero_positions`: same idea as above, for a read‑only node that only publishes joint states.
+
+  To customize the home, edit these arrays in the respective YAML file and then re‑launch the corresponding launch file (e.g. the hardware or read‑only launch). 
+
 
 
 
