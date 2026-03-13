@@ -168,14 +168,14 @@
       <inertia ixx="5.03136e-05" ixy="0" ixz="0" iyy="4.64098e-05" iyz="0" izz="2.72961e-05"/>
     </inertial>
     <visual>
-      <origin xyz="0.0 0 0" rpy="-1.57079 0 0"/>
+      <origin xyz="0.0 0 0" rpy="-1.57079 0 1.57079"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Fixed_Jaw.stl"/>
       </geometry>
       <material name="3d_printed"/>
     </visual>
     <visual>
-      <origin xyz="0.0 0 0" rpy="-1.57079 0 0"/>
+      <origin xyz="0.0 0 0" rpy="-1.57079 0 1.57079"/>
       <geometry>
         <mesh filename="package://lerobot/meshes/Fixed_Jaw_Motor.stl"/>
       </geometry>
@@ -243,7 +243,7 @@
   <joint name="Wrist_Roll" type="revolute">
     <parent link="wrist"/>
     <child link="gripper"/>
-    <origin xyz="-0.0601 0 0" rpy="0 -1.57079 0"/>
+    <origin xyz="-0.0601 0 0" rpy="0.0 -1.57079 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-3.14158" upper="3.14158" effort="35" velocity="1"/>
   </joint>
@@ -259,7 +259,7 @@
   <joint name="Gripper" type="revolute">
     <parent link="gripper"/>
     <child link="jaw"/>
-    <origin xyz="-0.0202 0 0.0244" rpy="1.57079 3.14158 0.0"/>
+    <origin xyz="0 -0.0202 0.0244" rpy="1.57079 3.14158 1.57079"/>
     <axis xyz="0 0 1"/>
     <limit lower="-0.2" upper="2.0" effort="35" velocity="1"/>
   </joint>
