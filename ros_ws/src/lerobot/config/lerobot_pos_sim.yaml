@@ -1,0 +1,4 @@
+lerobot_sim:
+  ros__parameters:
+    mode: "position"
+    home_position: [0.0, 1.8326, -1.2217, -1.0472, 0.0]
