@@ -6,6 +6,6 @@ lerobot_read:
     ids: [11, 12, 13, 14, 15, 16]
     zero_positions: [1950, 1950, 1950, 2048, 2048, 2048]
     # Per-joint sign to match URDF/sim (1 or -1). Order: Shoulder_Rotation, Shoulder_Pitch, Elbow, Wrist_Pitch, Wrist_Roll, Gripper
-    joint_signs: [1.0, -1.0, -1.0, -1.0, 1.0, 1.0]
+    joint_signs: [-1.0, -1.0, -1.0, -1.0, 1.0, 1.0]
     publish_rate: 50.0
     logging: false
