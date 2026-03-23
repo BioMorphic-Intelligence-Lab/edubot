@@ -68,7 +68,7 @@ LeRobotHW::LeRobotHW():
         rclcpp::Rate rate(20);  // 20 Hz polling
 
         for (int attempt = 0; attempt < 200 && !at_home && rclcpp::ok(); ++attempt) { // max 10s    
-            
+
             std::vector<double> current_q = this->_driver->getCurrentPositions();    
             at_home = true;
             for (size_t j = 0; j < this->HOME.size(); ++j) {
@@ -184,7 +184,6 @@ void LeRobotHW::set_des_gripper(GripperState state)
     }
 }
 
-
 /* Set the currently desired gripper opening 
  * @param o: Opening degree 
  * 0 = fully closed
@@ -258,7 +257,9 @@ void LeRobotHW::homing()
 
 std::vector<double> LeRobotHW::get_q()
 {
+    // Get current position from the driver
     std::vector<double> q = this->_driver->getCurrentPositions();
+    // Reverse the direction when needed to comply with convention
     for (size_t i = 0; i < q.size() && i < this->joint_signs.size(); i++)
         q[i] *= this->joint_signs[i];
     return q;
