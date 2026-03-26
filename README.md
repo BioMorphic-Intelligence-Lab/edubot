@@ -168,6 +168,8 @@ sudo apt purge brltty
 ### Wrong baud rate or USB port
 In the config (`lerobot\config\robot_hw.yaml`), the USB port name is defined along with the baud rate. You can check which USB port is assigned by calling `ls /dev/ttyUSB*`. This should correspond to the serial port name defined in the yaml file. Rebuild to make config changes take effect.
 
+If you are using WSL, the issue may be in USB passthrough to WSL. You can install and use `usbipd` to enable USB passthrough, bind the port, and attach to WSL. Google and ChatGPT are your friend :)
+
 ## Issues
 
 If any bugs or issues with this software occur, please don't hesitate to use the [Issues](https://github.com/BioMorphic-Intelligence-Lab/edubot/issues) pane within this repository. Please write a short description of the issue and some steps to reproduce it.
