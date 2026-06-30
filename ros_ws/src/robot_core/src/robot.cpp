@@ -138,6 +138,7 @@ void Robot::timer_callback()
   // Get Joint states (get_q/get_qdot may return n or n+1 depending on subclass)
   std::vector<double> q_pub = this->get_q();
   std::vector<double> qdot_pub = this->get_qdot();
+  std::vector<double> effort_pub = this->get_effort();
 
   // Ensure we have exactly names.size() entries (6: 5 arm + 1 Gripper).
   // If subclass already included gripper (e.g. HW returns 6 from driver), use as is.
@@ -155,10 +156,14 @@ void Robot::timer_callback()
     q_pub.resize(expected, 0.0);
   if (qdot_pub.size() != expected)
     qdot_pub.resize(expected, 0.0);
+  // Effort is optional; only resize if the subclass provided any.
+  if (!effort_pub.empty() && effort_pub.size() != expected)
+    effort_pub.resize(expected, 0.0);
 
   // Publish current joint state
   js.position = q_pub;
   js.velocity = qdot_pub;
+  js.effort = effort_pub;
   this->joint_state_pub->publish(js);
 }    
 
@@ -172,6 +177,13 @@ std::vector<double> Robot::get_qdot()
   /* By default we assume we have no velocity feedback
    * and simply return zero */
   return this->qdot;
+}
+
+std::vector<double> Robot::get_effort()
+{
+  /* By default we have no effort feedback; return empty so the base
+   * publisher leaves the effort field unset. */
+  return {};
 }
 
 std::vector<double> Robot::get_gripper()

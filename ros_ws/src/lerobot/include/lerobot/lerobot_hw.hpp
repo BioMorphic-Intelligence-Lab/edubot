@@ -23,6 +23,7 @@ protected:
 
     std::vector<double> get_q() override;
     std::vector<double> get_qdot() override;
+    std::vector<double> get_effort() override;
     std::vector<double> get_gripper() override;
 
     bool set_mode(Mode mode);

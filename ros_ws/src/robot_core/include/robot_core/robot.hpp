@@ -55,6 +55,7 @@ protected:
 
     virtual std::vector<double> get_q();
     virtual std::vector<double> get_qdot();
+    virtual std::vector<double> get_effort();
     virtual std::vector<double> get_gripper();
     virtual std::vector<double> get_gripper_vel();
 

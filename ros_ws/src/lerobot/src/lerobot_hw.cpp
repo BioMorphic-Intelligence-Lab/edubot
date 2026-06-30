@@ -274,6 +274,15 @@ std::vector<double> LeRobotHW::get_qdot()
     return qdot;
 }
 
+std::vector<double> LeRobotHW::get_effort()
+{
+    // Motor current [A] used as a proxy for joint effort/torque.
+    std::vector<double> effort = this->_driver->getCurrentCurrents();
+    for (size_t i = 0; i < effort.size() && i < this->joint_signs.size(); i++)
+        effort[i] *= this->joint_signs[i];
+    return effort;
+}
+
 std::vector<double> LeRobotHW::get_gripper()
 {
     std::vector<double> gripper = {0};

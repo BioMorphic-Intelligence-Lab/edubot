@@ -70,11 +70,14 @@ void LeRobotRead::timer_callback()
 
     std::vector<double> pos = driver_->getCurrentPositions();
     std::vector<double> vel = driver_->getCurrentVelocities();
+    std::vector<double> eff = driver_->getCurrentCurrents();  // motor current [A] as effort
 
     for (size_t i = 0; i < pos.size() && i < joint_signs.size(); i++)
         pos[i] *= joint_signs[i];
     for (size_t i = 0; i < vel.size() && i < joint_signs.size(); i++)
         vel[i] *= joint_signs[i];
+    for (size_t i = 0; i < eff.size() && i < joint_signs.size(); i++)
+        eff[i] *= joint_signs[i];
 
     if (pos.size() > js.name.size())
         pos.resize(js.name.size());
@@ -82,9 +85,12 @@ void LeRobotRead::timer_callback()
         pos.resize(js.name.size(), 0.0);
     if (vel.size() != pos.size())
         vel.resize(pos.size(), 0.0);
+    if (eff.size() != pos.size())
+        eff.resize(pos.size(), 0.0);
 
     js.position = pos;
     js.velocity = vel;
+    js.effort = eff;
     joint_state_pub_->publish(js);
 }
 

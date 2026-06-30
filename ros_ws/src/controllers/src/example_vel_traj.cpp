@@ -34,7 +34,7 @@ void ExampleVelTraj::_timer_callback()
   // Push joint velocity
   for(uint i = 0; i < this->home.size(); i++)
   {
-    velocities.push_back(-0.025 * M_PI * sin(2.0 * M_PI / 10.0 * dt));
+    velocities.push_back(-0.1 * M_PI * sin(2.0 * M_PI / 10.0 * dt));
   }
   // Push gripper velocities
   velocities.push_back(0.25 * (sin(2 * M_PI / 10.0 * dt)));
