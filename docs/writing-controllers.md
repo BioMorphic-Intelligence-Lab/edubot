@@ -142,14 +142,12 @@ entry_points={
 
 ## Caveats
 
-- [`CMakeLists.txt`](../ros_ws/src/controllers/CMakeLists.txt) builds
-  `example_pos_traj` and `example_vel_traj`, but
-  [`launch/lerobot_controller.launch.py`](../ros_ws/src/controllers/launch/lerobot_controller.launch.py)
-  references an `example_traj` executable that no longer exists, so prefer running
-  the examples directly with `ros2 run` as shown above.
+- The `controllers` package has no launch files; run the examples directly with
+  `ros2 run` as shown above.
 - The `lerobot_params.yaml` namespace (`example_traj_lerobot`) does not match the
-  node names the examples register, so the `home` parameter from that file is not
-  applied when running via `ros2 run` (the in-code default is used). See
+  node names the examples register, and the examples do not load it when run via
+  `ros2 run`, so the `home` parameter from that file is not applied (the in-code
+  default is used). See
   [Configuration](configuration.md#lerobot_paramsyaml-example-controller).
 
 ## `testing/` folder

@@ -5,8 +5,8 @@ Back to [Home](Home.md)
 All runtime parameters live in YAML files under
 [`ros_ws/src/lerobot/config`](../ros_ws/src/lerobot/config) (for the robot/sim
 nodes) and [`ros_ws/src/controllers/config`](../ros_ws/src/controllers/config)
-(for the example controller). Each launch file loads the matching file; see
-[Building and running](building-and-running.md) and
+(for the example controller). The `lerobot` launch files load the matching file;
+see [Building and running](building-and-running.md) and
 [LeRobot nodes](lerobot-nodes.md).
 
 ROS 2 parameters are namespaced under the node name, then `ros__parameters`.
@@ -86,7 +86,7 @@ The other base parameters (`f`, `pub_topic`, `sub_topic`) use the code defaults
 
 ## `lerobot_params.yaml` (example controller)
 
-Loaded by the example C++ controller launch file.
+Ships with the `controllers` package and is installed into its share folder.
 
 File: [`config/lerobot_params.yaml`](../ros_ws/src/controllers/config/lerobot_params.yaml)
 
@@ -101,11 +101,13 @@ example_traj_lerobot:
 |-----|-------|---------|
 | `home` | `[0.0, 1.8326, -1.2217, -1.0472, 0.0]` | Base pose (rad) the example controller oscillates around |
 
-> Note: this file's namespace is `example_traj_lerobot`, but the example nodes are
-> run directly with `ros2 run controllers example_pos_traj` / `example_vel_traj`,
-> which use their own node names. See
-> [Writing controllers](writing-controllers.md#caveats) for the stale launch-file
-> details.
+> Note: the example controllers are run directly with
+> `ros2 run controllers example_pos_traj` / `example_vel_traj`, which do not load
+> this file, so they use their in-code `home` default. Also, the file's namespace
+> (`example_traj_lerobot`) does not match the example node names. To apply it you
+> would pass it explicitly, e.g.
+> `ros2 run controllers example_pos_traj --ros-args --params-file <path>`, with a
+> matching namespace.
 
 ## Customizing the home position
 
