@@ -94,7 +94,7 @@ sudo apt install libboost-all-dev
 
 ## Cloning the repository
 
-The driver library [`feetech_cpp_lib`](../ros_ws/src/feetech_cpp_lib) is a git
+The driver library [`feetech_cpp_lib`](https://github.com/BioMorphic-Intelligence-Lab/feetech_cpp_lib) is a git
 **submodule** (it points at the
 [`feetech_cpp_lib`](https://github.com/BioMorphic-Intelligence-Lab/feetech_cpp_lib)
 repository on the `leRobot_mods` branch, as declared in
